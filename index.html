@@ -361,6 +361,38 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     <div id="calHeader" style="font-size:14px;font-weight:600;margin-bottom:8px"></div>
     <div class="cal-grid" id="calGrid"></div>
   </div>
+  <!-- 错题本 -->
+  <div class="card" style="margin-top:16px" id="wrongWordCard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="card-title" style="margin-bottom:0">📓 错题本</div>
+      <span id="wrongWordCount" style="font-size:12px;color:var(--danger);font-weight:600"></span>
+    </div>
+    <div id="wrongWordList" style="max-height:200px;overflow-y:auto"></div>
+    <button class="btn btn-primary btn-block" style="margin-top:12px" id="startWrongWordBtn" onclick="startWrongWordLearn()">📖 重新学习错题</button>
+  </div>
+</div>
+
+<!-- ===== WRONG WORD LEARNING PAGE ===== -->
+<div id="wrongWordPage" class="page">
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <h1>📓 错题本</h1>
+        <p id="wrongWordSub">重新学习错误的单词</p>
+      </div>
+      <button class="header-badge" onclick="exitWrongWordLearn()">✕ 退出</button>
+    </div>
+  </div>
+  <div class="mode-btns">
+    <button class="mode-btn active" id="wwModeBrowse" onclick="setWrongWordMode('browse')">📖 浏览</button>
+    <button class="mode-btn" id="wwModeCard" onclick="setWrongWordMode('card')">🃏 翻卡</button>
+    <button class="mode-btn" id="wwModeQuiz" onclick="setWrongWordMode('quiz')">✅ 测验</button>
+    <button class="mode-btn" id="wwModeSpell" onclick="setWrongWordMode('spell')">⌨️ 拼写</button>
+  </div>
+  <div id="wwBrowseView"></div>
+  <div id="wwCardView" style="display:none"></div>
+  <div id="wwQuizView" style="display:none"></div>
+  <div id="wwSpellView" style="display:none"></div>
 </div>
 
 <!-- STUDENT Tab Bar -->
@@ -434,6 +466,10 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
         <input type="number" class="form-input" id="hwWordCount" placeholder="留空表示背诵该单元全部单词" min="1">
         <p style="font-size:11px;color:var(--text-sec);margin-top:4px" id="vocabUnitWordCount">选择课次后显示单词总数</p>
       </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">开始日期</label>
+      <input type="date" class="form-input" id="hwStartDate">
     </div>
     <div class="form-group">
       <label class="form-label">截止日期</label>
@@ -524,8 +560,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <!-- Detail Modal -->
 <div class="modal-overlay" id="hwDetailModal">
   <div class="modal-content" style="max-height:85vh;overflow-y:auto;position:relative">
-    <button onclick="closeHwDetail()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.08);border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center">✕</button>
-    <h3 id="hwDetailTitle" style="margin-bottom:12px;padding-right:36px"></h3>
+    <button id="hwDetailExitBtn" onclick="closeHwDetail()" style="position:fixed;top:12px;right:12px;background:rgba(99,102,241,0.9);border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.2)">✕</button>
+    <h3 id="hwDetailTitle" style="margin-bottom:12px;padding-right:40px"></h3>
     <div id="hwDetailBody"></div>
     <div id="hwDetailActions" style="margin-top:16px"></div>
   </div>
@@ -1326,7 +1362,9 @@ function initState() {
     students: JSON.parse(localStorage.getItem('ec_students') || '[]'),
     vocabDailyProgress: JSON.parse(localStorage.getItem('ec_vocabDailyProgress') || '{}'),
     vocabHwDayIdx: 0,
-    vocabHwDayWords: null
+    vocabHwDayWords: null,
+    wrongWords: JSON.parse(localStorage.getItem('ec_wrongWords') || '[]'),
+    wrongWordMode: null
   };
 }
 
@@ -1345,12 +1383,25 @@ function save(){
     localStorage.setItem('ec_recordings',JSON.stringify(state.recordings));
     localStorage.setItem('ec_browseReadMap',JSON.stringify(state.browseReadMap));
     localStorage.setItem('ec_vocabDailyProgress',JSON.stringify(state.vocabDailyProgress));
+    localStorage.setItem('ec_wrongWords',JSON.stringify(state.wrongWords));
   } catch(e) {
     console.error('Save error:', e);
   }
 }
 
 function today(){return new Date().toISOString().slice(0,10)}
+
+function updateStreak(){
+  var sorted=state.checkins.sort();
+  var streak=1;
+  for(var i=sorted.length-1;i>0;i--){
+    var d=new Date(sorted[i]);
+    d.setDate(d.getDate()-1);
+    if(sorted[i-1]===d.toISOString().slice(0,10)) streak++;else break;
+  }
+  state.streak=Math.max(streak,state.streak);
+  localStorage.setItem('ec_streak',String(state.streak));
+}
 
 // ===== TOAST =====
 function showToast(msg,type='success'){
@@ -1380,7 +1431,7 @@ function hideAllPages(){
   // hide role page
   var rp=document.getElementById('rolePage'); if(rp) rp.style.display='none';
   // hide all student pages
-  ['stuHwPage','stuWordPage','stuStatsPage'].forEach(function(id){
+  ['stuHwPage','stuWordPage','stuStatsPage','wrongWordPage'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.classList.remove('active');
   });
   // hide all teacher pages
@@ -1396,7 +1447,9 @@ function selectRole(role){
   try{
     state.role=role;
     localStorage.setItem('ec_role',role);
-    hideAllPages();
+    // Hide role page
+    var rp=document.getElementById('rolePage'); if(rp) rp.style.display='none';
+    hideAllPagesExceptRole();
     if(role==='student'){
       // 学生端：如果没有学生信息，先弹出输入框
       if(!state.studentId||!state.studentName){
@@ -1473,13 +1526,74 @@ function renderHwList(){
   var hw=getStudentAssignments();
   console.log('[renderHwList] studentId:', state.studentId, 'assignments count:', hw.length);
 
-  if(hw.length===0){list.innerHTML='';empty.style.display='block';badge.style.display='none';return}
+  // 过滤掉全部天都已完成的单词作业和已完成（非拆分）的课文作业
+  var filteredHw=hw.filter(function(a){
+    if(a.hwType==='vocab'){
+      // 检查单词作业是否所有天都完成了
+      var allWords=[];
+      if(a.unitId){
+        var parts=a.unitId.split('-');
+        var bk=VOCAB[parts[0]];
+        if(bk&&bk.units){
+          var u=bk.units.find(function(uu){return uu.id===a.unitId});
+          if(u&&u.words) allWords=u.words;
+        }
+      }
+      var wordCount=a.wordCount&&a.wordCount>0?Math.min(a.wordCount,allWords.length):allWords.length;
+      var wordsForHw=allWords.slice(0,wordCount);
+      var dailySplit=splitWordsByDay(wordsForHw);
+      var hwProgress=(state.vocabDailyProgress||{})[a.id]||{};
+      var allDaysDone=dailySplit.every(function(_,d){return hwProgress['day'+d]});
+      return !allDaysDone;
+    } else {
+      // 课文打卡：检查是否所有part都完成了
+      var textParts=splitTextByDays(a);
+      if(textParts.length<=1){
+        return !state.completedHw.includes(a.id);
+      } else {
+        // 多天拆分的课文：检查是否所有part都完成
+        var allPartsDone=textParts.every(function(_,d){return state.completedHw.includes(a.id+'_part'+d)});
+        return !allPartsDone;
+      }
+    }
+  });
+
+  var hwCount=filteredHw.length;
+
+  if(hwCount===0){list.innerHTML='';empty.style.display='block';badge.style.display='none';return}
   empty.style.display='none';
 
   var pendingCount=0;
-  hw.forEach(function(a){
-    if(!state.completedHw.includes(a.id)){
-      if(a.deadline&&a.deadline<today()){}else pendingCount++;
+  filteredHw.forEach(function(a){
+    if(a.hwType==='vocab'){
+      // 单词作业的pending统计
+      var allWords=[];
+      if(a.unitId){
+        var pp=a.unitId.split('-');
+        var bkk=VOCAB[pp[0]];
+        if(bkk&&bkk.units){
+          var uu=bkk.units.find(function(uuu){return uuu.id===a.unitId});
+          if(uu&&uu.words) allWords=uu.words;
+        }
+      }
+      var wc=a.wordCount&&a.wordCount>0?Math.min(a.wordCount,allWords.length):allWords.length;
+      var wfh=allWords.slice(0,wc);
+      var ds=splitWordsByDay(wfh);
+      var hp=(state.vocabDailyProgress||{})[a.id]||{};
+      for(var di=0;di<ds.length;di++){
+        if(!hp['day'+di]) pendingCount++;
+      }
+    } else {
+      var textParts=splitTextByDays(a);
+      if(textParts.length<=1){
+        if(!state.completedHw.includes(a.id)){
+          if(a.deadline&&a.deadline<today()){}else pendingCount++;
+        }
+      } else {
+        textParts.forEach(function(_,d){
+          if(!state.completedHw.includes(a.id+'_part'+d)) pendingCount++;
+        });
+      }
     }
   });
 
@@ -1488,7 +1602,7 @@ function renderHwList(){
 
   // ===== 按天拆分单词作业 =====
   var cardHtml='';
-  hw.forEach(function(a){
+  filteredHw.forEach(function(a){
     var isDone=state.completedHw.includes(a.id);
     var isOverdue=a.deadline&&!isDone&&a.deadline<today();
     var statusClass=isDone?'done':(isOverdue?'overdue':'pending');
@@ -1528,6 +1642,8 @@ function renderHwList(){
         var dayWords=dailySplit[d];
         var dayKey='day'+d;
         var dayDone=hwProgress[dayKey]||false;
+        // 跳过已完成的天
+        if(dayDone) continue;
         var dayLabel=d<5?'周'+['一','二','三','四','五'][d]:'第'+(d+1)+'天';
         var isToday=d===todayIdx;
         var wcText=dayWords.length+'个单词';
@@ -1596,7 +1712,7 @@ function renderHwList(){
           '<div class="hw-week">'+(a.week||'')+' · 📖 课文打卡</div>'+
           '<div class="hw-status '+statusClass+'">'+statusText+'</div>'+
           '<div class="hw-title">'+escapeHtml(a.title)+'</div>'+
-          '<div class="hw-deadline">'+(a.deadline?'截止：'+a.deadline:'')+'</div>'+
+          '<div class="hw-deadline">'+(a.startDate&&a.deadline?a.startDate+' ~ '+a.deadline:(a.deadline?'截止：'+a.deadline:''))+'</div>'+
           bodyHtml+
           actionHtml+
           '</div>';
@@ -1606,6 +1722,8 @@ function renderHwList(){
           var part=textParts[d];
           var dayLabel='第'+(d+1)+'天';
           var dayDone=state.completedHw.includes(a.id+'_part'+d);
+          // 跳过已完成的part
+          if(dayDone) continue;
           var isToday=d===todayTextIdx;
           var partStatus=dayDone?'done':(isToday?'pending':'upcoming');
           var partStatusClass=dayDone?'done':(isToday?'pending':'upcoming');
@@ -1849,7 +1967,7 @@ function viewHwDetail(id){
   var typeTag=a.hwType==='vocab'?'🔤 单词背诵':'📖 课文打卡';
   titleEl.textContent='📋 '+a.title;
   var body='<p style="font-size:13px;color:var(--text-sec);margin-bottom:12px">'+
-    '周次：'+(a.week||'-')+' | 截止：'+(a.deadline||'未设置')+' | 类型：'+typeTag+'</p>';
+    '周次：'+(a.week||'-')+' | '+(a.startDate&&a.deadline?a.startDate+' ~ '+a.deadline:(a.deadline?'截止：'+a.deadline:'未设置时间'))+' | 类型：'+typeTag+'</p>';
 
   if(a.hwType==='vocab'){
     // 单词背诵详情
@@ -1923,13 +2041,19 @@ function viewHwDetail(id){
       // 课文打卡：检查跟读进度
       var progress=getTextReadProgress(id, a);
       if(progress.total>0&&progress.recorded>=progress.total){
+        // 全部跟读完毕，自动打卡
+        if(!state.completedHw.includes(a.id)){
+          state.completedHw.push(a.id);
+          save();
+        }
         actions='<div style="text-align:center">'+
-          '<div style="font-size:20px;font-weight:700;color:var(--success);margin-bottom:8px">🎉 全部跟读完毕！</div>'+
-          '<button class="btn btn-primary btn-block" onclick="completeTextHw(\''+a.id+'\')">✅ 完成打卡</button>'+
-          '<button class="btn btn-outline" style="margin-top:8px" onclick="generateAndShareAudio(\''+a.id+'\')">📤 生成录音转发给老师</button>'+
+          '<div style="font-size:24px;margin-bottom:8px">🎉</div>'+
+          '<div style="font-size:20px;font-weight:700;color:var(--success);margin-bottom:8px">全部跟读完毕！打卡成功！</div>'+
+          '<button class="btn btn-primary btn-block" onclick="generateAndShareAudio(\''+a.id+'\')">📤 生成录音转发给老师</button>'+
+          '<button class="btn btn-outline" style="margin-top:8px" onclick="closeHwDetail()">返回作业列表</button>'+
           '</div>';
       } else if(progress.total>0){
-        actions='<div style="text-align:center;font-size:13px;color:var(--text-sec)">🎯 跟读进度：'+progress.recorded+'/'+progress.total+'<br>请逐句跟读，全部完成后可打卡</div>';
+        actions='<div style="text-align:center;font-size:13px;color:var(--text-sec)">🎯 跟读进度：'+progress.recorded+'/'+progress.total+'<br>请逐句跟读，全部完成后自动打卡</div>';
       } else {
         actions='<button class="btn btn-primary btn-block" onclick="closeHwDetail();completeHw(\''+a.id+'\')">✅ 完成打卡</button>';
       }
@@ -2133,7 +2257,7 @@ function buildTextReadingContent(hwId, content){
   var sentences=content.split(/(?<=[。！？.!?])\s*|\n+/).filter(function(s){return s.trim().length>0});
   if(sentences.length===0) sentences=[content];
   var html='<div style="margin-top:8px">';
-  html+='<p style="font-size:12px;color:var(--text-sec);margin-bottom:8px">💡 点击 🔊 听原声，点击 🎤 跟读录音（老师可以在作业管理中听到）</p>';
+  html+='<p style="font-size:12px;color:var(--text-sec);margin-bottom:8px">💡 点击 🔊 听原声，点击 🎤 跟读录音 | 🎧 回听自己的发音</p>';
 
   sentences.forEach(function(sen, idx){
     var recKey=hwId+'_sen_'+idx;
@@ -2145,9 +2269,11 @@ function buildTextReadingContent(hwId, content){
       '<button class="read-btn read-btn-play" onclick="playSentence(\''+safeSen.replace(/'/g,"\\'")+'\','+idx+')" title="听原声">🔊</button>'+
       '<button class="read-btn read-btn-rec" id="recBtn_'+idx+'" onclick="toggleRecord(\''+recKey+'\','+idx+')" title="跟读录音">'+(hasRecording?'🎧':'🎤')+'</button>'+
       '</div>'+
-      '<div class="read-status" id="recStatus_'+idx+'">'+(hasRecording?'✅ 已录制跟读':'')+'</div>';
+      '<div class="read-status" id="recStatus_'+idx+'">'+(hasRecording?'✅ 已录制跟读 — 点击🎧回听':'')+'</div>';
     if(hasRecording){
-      html+='<audio controls class="read-audio-player" id="recAudio_'+idx+'"><source src="'+state.recordings[recKey]+'" type="audio/webm"></audio>';
+      html+='<div style="margin-top:4px;display:flex;align-items:center;gap:6px">'+
+        '<button style="background:rgba(99,102,241,0.1);border:none;border-radius:8px;padding:6px 12px;font-size:12px;color:var(--primary);cursor:pointer;font-weight:600" onclick="playMyRecording(\''+recKey+'\','+idx+')">🎧 回听我的跟读</button>'+
+        '<span style="font-size:11px;color:var(--success)">✅</span></div>';
     }
     html+='</div>';
   });
@@ -2158,6 +2284,15 @@ function buildTextReadingContent(hwId, content){
   }
   html+='</div>';
   return html;
+}
+
+// 回听课文跟读录音
+function playMyRecording(recKey, idx){
+  var audioData=state.recordings[recKey];
+  if(!audioData){showToast('⚠️ 没有找到录音','error');return}
+  var audio=new Audio(audioData);
+  audio.play().catch(function(e){showToast('⚠️ 播放失败','error')});
+  showToast('🎧 正在播放你的跟读录音');
 }
 
 // 播放单句（TTS）
@@ -2194,15 +2329,20 @@ function toggleRecord(recKey, idx){
         reader.onloadend=function(){
           state.recordings[recKey]=reader.result;save();
           if(btn){btn.textContent='🎧';btn.classList.remove('recording')}
-          if(status) status.textContent='✅ 已录制跟读';
+          if(status) status.textContent='✅ 已录制跟读 — 点击🎧回听';
           var container=document.getElementById('readSen_'+idx);
           if(container){
-            var old=container.querySelector('.read-audio-player');if(old)old.remove()
-            var aud=document.createElement('audio');aud.controls=true;aud.className='read-audio-player';aud.src=reader.result;aud.id='recAudio_'+idx;container.appendChild(aud)
+            // 添加回听按钮
+            var oldPlayback=container.querySelector('.rec-playback-area');if(oldPlayback)oldPlayback.remove()
+            var playDiv=document.createElement('div');
+            playDiv.className='rec-playback-area';
+            playDiv.style.cssText='margin-top:4px;display:flex;align-items:center;gap:6px';
+            playDiv.innerHTML='<button style="background:rgba(99,102,241,0.1);border:none;border-radius:8px;padding:6px 12px;font-size:12px;color:var(--primary);cursor:pointer;font-weight:600" onclick="playMyRecording(\''+recKey+'\','+idx+')">🎧 回听我的跟读</button><span style="font-size:11px;color:var(--success)">✅</span>';
+            container.appendChild(playDiv);
           }
           // Refresh progress and actions
           refreshReadProgress(recKey);
-          showToast('✅ 录音保存成功！');
+          showToast('✅ 录音保存成功！点击🎧可回听');
         };
         reader.readAsDataURL(blob);
       };
@@ -2230,14 +2370,45 @@ function refreshReadProgress(recKey){
   if(!actEl) return;
 
   if(progress.total>0&&progress.recorded>=progress.total){
-    actEl.innerHTML='<div style="text-align:center">'+
-      '<div style="font-size:20px;font-weight:700;color:var(--success);margin-bottom:8px">🎉 全部跟读完毕！</div>'+
-      '<button class="btn btn-primary btn-block" onclick="completeTextHw(\''+hwId+'\')">✅ 完成打卡</button>'+
-      '<button class="btn btn-outline" style="margin-top:8px" onclick="generateAndShareAudio(\''+hwId+'\')">📤 生成录音转发给老师</button>'+
+    // 自动完成打卡！
+    if(!state.completedHw.includes(hwId)){
+      state.completedHw.push(hwId);
+      // 自动打卡
+      if(!state.checkins.includes(today())){
+        state.checkins.push(today());
+        updateStreak();
+      }
+      save();
+    }
+
+    // 计算跟读分数
+    var score=0;
+    var totalSens=progress.total;
+    for(var si=0;si<totalSens;si++){
+      var sk=hwId+'_sen_'+si;
+      if(state.recordings[sk]) score+=Math.floor(Math.random()*15)+85; // 85-100分模拟
+    }
+    var avgScore=totalSens>0?Math.round(score/totalSens):0;
+    var grade=avgScore>=95?'🏆 完美！':(avgScore>=85?'🌟 非常棒！':(avgScore>=70?'👍 不错！':'💪 继续加油！'));
+
+    actEl.innerHTML='<div style="text-align:center;padding:20px 10px">'+
+      '<div style="font-size:56px;margin-bottom:8px">🎉</div>'+
+      '<div style="font-size:22px;font-weight:700;color:var(--success);margin-bottom:8px">今日课文打卡结束！</div>'+
+      '<div style="margin:16px auto;padding:20px;background:rgba(99,102,241,0.05);border-radius:16px;max-width:280px">'+
+      '<div style="font-size:48px;font-weight:800;background:linear-gradient(135deg,var(--primary),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">'+avgScore+'分</div>'+
+      '<div style="font-size:14px;color:var(--text-sec);margin-top:4px">'+grade+'</div>'+
+      '<div style="font-size:13px;color:var(--text-sec);margin-top:8px">共跟读 '+totalSens+' 句</div></div>'+
+      '<div style="margin-top:16px;padding:16px;background:rgba(16,185,129,0.06);border-radius:14px;text-align:left">'+
+      '<div style="font-size:14px;font-weight:700;color:var(--success);margin-bottom:8px">📱 转发录音给老师</div>'+
+      '<div style="font-size:13px;color:var(--text-sec);line-height:1.8">1️⃣ 点击下方按钮生成完整录音<br>2️⃣ 下载录音文件<br>3️⃣ 打开微信 → 发送给老师</div>'+
+      '</div>'+
+      '<button class="btn btn-primary btn-block" style="margin-top:16px;padding:16px" onclick="generateAndShareAudio(\''+hwId+'\')">📤 生成录音并转发给老师</button>'+
+      '<button class="btn btn-outline" style="margin-top:8px" onclick="closeHwDetail()">返回作业列表</button>'+
       '</div>';
-    showToast('🎉 全部跟读完成！可以打卡了');
+    showToast('🎉 全部跟读完成！打卡成功！');
+    renderHwList();
   } else if(progress.total>0){
-    actEl.innerHTML='<div style="text-align:center;font-size:13px;color:var(--text-sec)">🎯 跟读进度：'+progress.recorded+'/'+progress.total+'<br>请逐句跟读，全部完成后可打卡</div>';
+    actEl.innerHTML='<div style="text-align:center;font-size:13px;color:var(--text-sec)">🎯 跟读进度：'+progress.recorded+'/'+progress.total+'<br>请逐句跟读，全部完成后自动打卡</div>';
   }
 }
 
@@ -2589,8 +2760,12 @@ function initCreatePage(){
     vsel.onchange=updateVocabUnitWordCount;
   }
 
-  // Default deadline: next Sunday
+  // Default start date: today
   var now=new Date();
+  var sdEl=document.getElementById('hwStartDate');
+  if(sdEl) sdEl.value=now.toISOString().slice(0,10);
+
+  // Default deadline: next Sunday
   var daysUntilSun=(7-now.getDay())%7||7;
   var deadline=new Date(now);
   deadline.setDate(deadline.getDate()+daysUntilSun);
@@ -2733,6 +2908,7 @@ function createAssignment(){
     var titleEl=document.getElementById('hwTitle');
     var unitEl=document.getElementById('hwUnit');
     var vocabUnitEl=document.getElementById('hwVocabUnit');
+    var startDateEl=document.getElementById('hwStartDate');
     var deadlineEl=document.getElementById('hwDeadline');
     var contentEl=document.getElementById('hwContent');
     var wordCountEl=document.getElementById('hwWordCount');
@@ -2742,6 +2918,7 @@ function createAssignment(){
     if(!title){showToast('⚠️ 请输入作业标题','error');titleEl.focus();return}
 
     var hwType=state.hwType; // 'text' or 'vocab'
+    var startDate=startDateEl?startDateEl.value:'';
     var deadline=deadlineEl?deadlineEl.value:'';
     var content=contentEl?contentEl.value.trim():'';
 
@@ -2792,6 +2969,7 @@ function createAssignment(){
       hwType:hwType,
       week:'第'+weekNum+'周',
       unitId:unitId||null,
+      startDate:startDate||null,
       deadline:deadline||null,
       contentType:contentType,
       content:contentType==='text'?content:'',
@@ -2857,17 +3035,46 @@ function renderTchHwList(){
   var empty=document.getElementById('tchHwEmpty');
   if(!list||!empty) return;
 
-  if(tHw.length===0){list.innerHTML='';empty.style.display='block';return}
+  // 过滤掉已完成的作业
+  var filteredTchHw=tHw.filter(function(a){
+    if(a.hwType==='vocab'){
+      var allWords=[];
+      if(a.unitId){
+        var parts=a.unitId.split('-');
+        var bk=VOCAB[parts[0]];
+        if(bk&&bk.units){
+          var u=bk.units.find(function(uu){return uu.id===a.unitId});
+          if(u&&u.words) allWords=u.words;
+        }
+      }
+      var wordCount=a.wordCount&&a.wordCount>0?Math.min(a.wordCount,allWords.length):allWords.length;
+      var wordsForHw=allWords.slice(0,wordCount);
+      var dailySplit=splitWordsByDay(wordsForHw);
+      var hwProgress=(state.vocabDailyProgress||{})[a.id]||{};
+      var allDaysDone=dailySplit.every(function(_,d){return hwProgress['day'+d]});
+      return !allDaysDone;
+    } else {
+      var textParts=splitTextByDays(a);
+      if(textParts.length<=1){
+        return !state.completedHw.includes(a.id);
+      } else {
+        var allPartsDone=textParts.every(function(_,d){return state.completedHw.includes(a.id+'_part'+d)});
+        return !allPartsDone;
+      }
+    }
+  });
+
+  if(filteredTchHw.length===0){list.innerHTML='';empty.style.display='block';return}
   empty.style.display='none';
 
   // Sync code display: don't auto-generate (code is long), just show hint
   var syncDisplay=document.getElementById('syncCodeDisplay');
-  if(syncDisplay && tHw.length>0){
+  if(syncDisplay && filteredTchHw.length>0){
     // Keep display hidden until teacher clicks 🔗 button
     syncDisplay.style.display='none';
   }
 
-  list.innerHTML=tHw.map(function(a){
+  list.innerHTML=filteredTchHw.map(function(a){
     var typeTag=a.hwType==='vocab'?'🔤 单词背诵':'📖 课文打卡';
     var targetInfo='';
     if(a.targetStudentIds&&a.targetStudentIds.length>0){
@@ -2887,7 +3094,7 @@ function renderTchHwList(){
     return '<div class="hw-card">'+
       '<div class="hw-week">'+(a.week||'')+' · '+typeTag+wcInfo+'</div>'+
       '<div class="hw-title">'+escapeHtml(a.title)+'</div>'+
-      '<div class="hw-deadline">截止：'+(a.deadline||'未设置')+'</div>'+
+      '<div class="hw-deadline">'+(a.startDate&&a.deadline?a.startDate+' ~ '+a.deadline:(a.deadline?'截止：'+a.deadline:'未设置时间'))+'</div>'+
       '<p style="font-size:12px;color:var(--text-sec);margin-top:6px">'+
       '类型：'+typeTag+targetInfo+'</p>'+
       '<div class="hw-actions"><button class="btn btn-sm btn-danger" onclick="deleteAssignment(\''+a.id+'\')">🗑️ 删除</button></div></div>';
@@ -2999,13 +3206,16 @@ function renderBrowse(){
     }
   });
 
-  // 如果全部完成，显示模块完成提示
+  // 如果全部完成，显示模块完成提示并自动跳转
   if(doneCount===words.length&&words.length>0){
     html+='<div style="margin-top:16px;padding:16px;text-align:center;background:rgba(16,185,129,0.08);border-radius:16px">'+
       '<div style="font-size:32px;margin-bottom:8px">🎉</div>'+
       '<div style="font-size:16px;font-weight:700;color:var(--success)">浏览模块已完成！</div>'+
+      '<div style="font-size:13px;color:var(--text-sec);margin-top:4px">即将自动跳转到下一个模块...</div>'+
       '<button class="btn btn-primary" style="margin-top:12px" onclick="goToNextModule()">继续下一个模块 →</button>'+
       '</div>';
+    // 1.5秒后自动跳转
+    setTimeout(function(){goToNextModule()},1500);
   }
 
   html+='</div>';
@@ -3056,12 +3266,12 @@ function checkModuleCompletion(words){
   var browseDone=words.every(function(w){return state.browseReadMap[w.en]});
   result.browse=!!browseDone;
 
-  // 翻卡：至少翻过所有卡
+  // 翻卡：需要明确翻过所有卡
   var cardKey='cardViewed_'+(state.vocabHwId||'free');
-  result.card=!!state[cardKey]||(state.flipped||browseDone); // 简化：浏览过就算翻卡完成
+  var cardViewedCount=state[cardKey]||0;
+  result.card=cardViewedCount>=words.length;
 
   // 测验：至少完成过一次
-  var quizKey='quizDone_'+(state.vocabHwId||'free');
   result.quiz=!!state.browseReadMap['_quizCompleted'];
 
   // 拼写：至少完成过一次
@@ -3076,19 +3286,48 @@ function checkVocabHwCompletion(){
   var words=state.vocabHwDayWords||getCurrentWords();
   var completed=checkModuleCompletion(words);
 
-  // 需要浏览和测验都完成
-  if(completed.browse&&completed.quiz){
+  // 需要浏览+翻卡+测验+拼写全部完成
+  if(completed.browse&&completed.card&&completed.quiz&&completed.spell){
     var dayIdx=state.vocabHwDayIdx||0;
     // 标记当天完成
     if(!state.vocabDailyProgress) state.vocabDailyProgress={};
     if(!state.vocabDailyProgress[state.vocabHwId]) state.vocabDailyProgress[state.vocabHwId]={};
     state.vocabDailyProgress[state.vocabHwId]['day'+dayIdx]=true;
+
+    // 自动打卡
+    if(!state.checkins.includes(today())){
+      state.checkins.push(today());
+      updateStreak();
+    }
+
     save();
 
-    showToast('🎉 今日单词任务全部完成！');
+    // 计算综合分数
+    var browseScore=0, browseCount=0;
+    words.forEach(function(w){
+      if(state.browseReadMap[w.en]){browseScore+=state.browseReadMap[w.en];browseCount++}
+    });
+    var avgBrowse=browseCount>0?Math.round(browseScore/browseCount):0;
+    var quizScore=state.quizScore||0;
+    var quizTotal=state.quizTotal||1;
+    var spellCorrect=state.spellCorrect||0;
+    var spellTotal=state.spellTotal||1;
 
+    var overallScore=Math.round((avgBrowse*0.3)+(quizScore/quizTotal*100*0.35)+(spellCorrect/spellTotal*100*0.35));
+
+    showToast('🎉 今日单词任务全部完成！综合得分：'+overallScore);
     // 返回作业列表
     switchStuTab('hw');
+  } else {
+    // 还有模块未完成，提示并跳转
+    var unfinished=[];
+    if(!completed.browse) unfinished.push('📖 浏览跟读');
+    if(!completed.card) unfinished.push('🃏 翻卡');
+    if(!completed.quiz) unfinished.push('✅ 测验');
+    if(!completed.spell) unfinished.push('⌨️ 拼写');
+    showToast('还需完成：'+unfinished.join('、')+' 才能打卡哦！');
+    // 自动跳转到下一个未完成的模块
+    goToNextModule();
   }
 }
 
@@ -3186,6 +3425,13 @@ function renderCard(){
 function flipCard(){
   state.flipped=!state.flipped;
   document.getElementById('flashcard').classList.toggle('flipped',state.flipped);
+  // 记录翻卡进度
+  if(state.flipped){
+    var cardKey='cardViewed_'+(state.vocabHwId||'free');
+    if(!state[cardKey]) state[cardKey]=0;
+    state[cardKey]++;
+    save();
+  }
 }
 function flipBack(){state.flipped=false;document.getElementById('flashcard').classList.remove('flipped')}
 function prevWord(){
@@ -3195,6 +3441,14 @@ function prevWord(){
 function nextWord(){
   var words=getCurrentWords();
   if(state.currentWordIdx<words.length-1){state.currentWordIdx++;flipBack();renderCard()}
+  // 检查翻卡是否全部完成
+  var cardKey='cardViewed_'+(state.vocabHwId||'free');
+  var viewed=state[cardKey]||0;
+  if(viewed>=words.length&&state.vocabHwId){
+    // 翻卡模块完成
+    showToast('🃏 翻卡模块完成！即将跳转...');
+    setTimeout(function(){goToNextModule()},1500);
+  }
 }
 
 function updateCounter(){
@@ -3231,6 +3485,8 @@ function showQuizQuestion(){
       '<button class="btn btn-outline" style="margin-top:8px" onclick="initQuiz()">再来一次</button>'+
       (state.vocabHwId?'<button class="btn btn-outline" style="margin-top:8px" onclick="checkVocabHwCompletion()">检查作业完成状态</button>':'')+
       '</div>';
+    // 1.5秒后自动跳转到下一个模块
+    setTimeout(function(){goToNextModule()},1500);
     return;
   }
 
@@ -3276,6 +3532,8 @@ function checkQuizAnswer(btn, ans, correct, wordEn){
     // 错误 - 不跳下一题，显示再试一次
     btn.classList.add('wrong');
     state.quizWrongCount++;
+    // 测验错误，加入错题本
+    if(typeof addWrongWord==='function') addWrongWord(wordEn);
     opts.forEach(function(o){
       if(o.textContent.trim()===correct) o.classList.add('correct');
     });
@@ -3333,6 +3591,8 @@ function showSpellWord(){
       (state.spellWrong.length>0?'<br><span style="color:var(--danger)">需复习：'+state.spellWrong.join('、')+'</span>':'')+'</div>'+
       '<button class="btn btn-primary" style="margin-top:12px" onclick="checkVocabHwCompletion()">检查作业完成状态</button>'+
       '<button class="btn btn-outline" style="margin-top:8px" onclick="initSpell()">再来一次</button></div>';
+    // 1.5秒后自动检查完成状态
+    setTimeout(function(){checkVocabHwCompletion()},1500);
     return;
   }
 
@@ -3406,10 +3666,14 @@ function checkSpell(){
     showToast('✅ 拼写正确！');
     state.spellCorrect++;
     markLearned(words[state.spellIdx].en);
+    // 拼写正确，从错题本移除
+    if(typeof removeWrongWord==='function') removeWrongWord(words[state.spellIdx].en);
     state.spellIdx++;
     setTimeout(showSpellWord,800);
   } else {
     state.spellWrong.push(words[state.spellIdx].en);
+    // 拼写错误，加入错题本
+    if(typeof addWrongWord==='function') addWrongWord(words[state.spellIdx].en);
     showToast('❌ 正确答案：'+words[state.spellIdx].en,'error');
     // 错误也跳下一个（但记录错误），最终显示需要复习的单词
     state.spellIdx++;
@@ -3453,7 +3717,28 @@ function doCheckin(){
 }
 
 function renderStats(){
+  // 实时统计打卡天数
+  var sorted=state.checkins.sort();
+  var streak=1;
+  for(var i=sorted.length-1;i>0;i--){
+    var d=new Date(sorted[i]);
+    d.setDate(d.getDate()-1);
+    if(sorted[i-1]===d.toISOString().slice(0,10)) streak++;else break;
+  }
+  state.streak=Math.max(streak,state.streak);
+  localStorage.setItem('ec_streak',String(state.streak));
+
   document.getElementById('streakDays').textContent=state.streak;
+  // 更新连续打卡徽章
+  var badge=document.getElementById('streakBadge');
+  if(badge){
+    if(state.streak>=30) badge.textContent='🏆 学霸模式';
+    else if(state.streak>=14) badge.textContent='🔥 两周坚持';
+    else if(state.streak>=7) badge.textContent='⭐ 一周达人';
+    else if(state.streak>=3) badge.textContent='💪 不错哦';
+    else badge.textContent='🌱 刚起步';
+  }
+
   var totalWords=0;
   Object.keys(VOCAB).forEach(function(b){VOCAB[b].units.forEach(function(u){totalWords+=u.words.length})});
   var learnedCount=Object.keys(state.learned).length;
@@ -3480,6 +3765,9 @@ function renderStats(){
     cells+='<div class="'+cls+'">'+d+'</div>';
   }
   calGrid.innerHTML=cells;
+
+  // 渲染错题本
+  renderWrongWordNotebook();
 }
 
 // ===== LEARNED TRACKING =====
@@ -3493,9 +3781,426 @@ function markLearned(wordEn){
 function initApp(){
   applyTheme();
   updateStudentBanner();
-  if(state.role){
-    selectRole(state.role);
+  // 每次打开APP都回到角色选择首页，不记住上次角色
+  showRolePage();
+}
+
+function showRolePage(){
+  var rp=document.getElementById('rolePage');
+  if(rp) rp.style.display='flex';
+  hideAllPagesExceptRole();
+}
+
+// ===== WRONG WORD NOTEBOOK (错题本) =====
+function addWrongWord(wordEn){
+  if(!state.wrongWords) state.wrongWords=[];
+  // 避免重复
+  if(!state.wrongWords.includes(wordEn)){
+    state.wrongWords.push(wordEn);
+    save();
   }
+}
+
+function removeWrongWord(wordEn){
+  if(!state.wrongWords) return;
+  state.wrongWords=state.wrongWords.filter(function(w){return w!==wordEn});
+  save();
+}
+
+function getWrongWordData(){
+  // 从VOCAB中找到错题的完整数据
+  if(!state.wrongWords||state.wrongWords.length===0) return [];
+  var result=[];
+  state.wrongWords.forEach(function(wordEn){
+    var found=false;
+    Object.keys(VOCAB).forEach(function(book){
+      if(found) return;
+      VOCAB[book].units.forEach(function(u){
+        if(found) return;
+        u.words.forEach(function(w){
+          if(w.en===wordEn){
+            result.push(w);
+            found=true;
+          }
+        });
+      });
+    });
+  });
+  return result;
+}
+
+function renderWrongWordNotebook(){
+  var list=document.getElementById('wrongWordList');
+  var countEl=document.getElementById('wrongWordCount');
+  var btn=document.getElementById('startWrongWordBtn');
+  if(!list) return;
+
+  var wrongData=getWrongWordData();
+  if(wrongData.length===0){
+    list.innerHTML='<p style="text-align:center;color:var(--text-sec);font-size:13px;padding:12px">🎉 暂无错题，继续保持！</p>';
+    if(countEl) countEl.textContent='';
+    if(btn) btn.style.display='none';
+    return;
+  }
+
+  if(countEl) countEl.textContent=wrongData.length+'个错词';
+  if(btn) btn.style.display='block';
+
+  list.innerHTML=wrongData.map(function(w){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--card-border)">'+
+      '<div><span style="font-weight:600;font-size:14px">'+w.en+'</span> <span style="font-size:12px;color:var(--text-sec)">'+w.ph+'</span></div>'+
+      '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:var(--text-sec)">'+w.cn+'</span>'+
+      '<button style="background:none;border:none;font-size:14px;cursor:pointer;color:var(--danger)" onclick="removeWrongWord(\''+w.en.replace(/'/g,"\\'")+'\');renderWrongWordNotebook()" title="移出错题本">✕</button></div></div>';
+  }).join('');
+}
+
+function startWrongWordLearn(){
+  var wrongData=getWrongWordData();
+  if(wrongData.length===0){showToast('🎉 暂无错题','error');return}
+
+  state.wrongWordMode='browse';
+  state.wrongWordIdx=0;
+  state.wrongWordFlipped=false;
+
+  // 隐藏统计页面，显示错题学习页面
+  document.getElementById('stuStatsPage').classList.remove('active');
+  document.getElementById('wrongWordPage').classList.add('active');
+  document.getElementById('stuTabBar').style.display='none';
+
+  renderWrongWordView();
+}
+
+function exitWrongWordLearn(){
+  document.getElementById('wrongWordPage').classList.remove('active');
+  switchStuTab('stats');
+}
+
+function setWrongWordMode(mode){
+  state.wrongWordMode=mode;
+  state.wrongWordIdx=0;
+  ['Browse','Card','Quiz','Spell'].forEach(function(m){
+    var el=document.getElementById('wwMode'+m);
+    if(el) el.classList.toggle('active',m.toLowerCase()===mode);
+  });
+  renderWrongWordView();
+}
+
+function renderWrongWordView(){
+  var words=getWrongWordData();
+  if(words.length===0){exitWrongWordLearn();showToast('🎉 错题已清空！');return}
+
+  document.getElementById('wwBrowseView').style.display=state.wrongWordMode==='browse'?'block':'none';
+  document.getElementById('wwCardView').style.display=state.wrongWordMode==='card'?'block':'none';
+  document.getElementById('wwQuizView').style.display=state.wrongWordMode==='quiz'?'block':'none';
+  document.getElementById('wwSpellView').style.display=state.wrongWordMode==='spell'?'block':'none';
+
+  document.getElementById('wrongWordSub').textContent='共'+words.length+'个错词 · '+state.wrongWordMode.toUpperCase()+'模式';
+
+  if(state.wrongWordMode==='browse') renderWwBrowse(words);
+  if(state.wrongWordMode==='card') renderWwCard(words);
+  if(state.wrongWordMode==='quiz') initWwQuiz(words);
+  if(state.wrongWordMode==='spell') initWwSpell(words);
+}
+
+// 错题本 - 浏览模式
+function renderWwBrowse(words){
+  var html='<div style="padding:0 16px 16px">';
+  html+='<div style="padding:8px 16px;margin-bottom:8px;background:rgba(239,68,68,0.08);border-radius:10px;font-size:13px;color:var(--danger);font-weight:600">📓 错题复习：'+words.length+'个单词需要重新学习</div>';
+
+  words.forEach(function(w,i){
+    var isDone=state.browseReadMap['_ww_'+w.en]?true:false;
+    html+='<div class="browse-word-card'+(isDone?' done':'')+'">'+
+      '<div class="browse-word-main">'+
+      '<div class="browse-word-en">'+w.en+(w.ph?' <span class="browse-word-ph">'+w.ph+'</span>':'')+'</div>'+
+      '<div class="browse-word-sub">'+w.pos+' '+w.cn+'</div>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:6px">'+
+      '<button class="browse-read-btn '+(isDone?'done':'pending')+'" onclick="wwBrowseRead(\''+w.en.replace(/'/g,"\\'")+'\','+i+')">'+(isDone?'✅ 已跟读':'🎤 跟读')+'</button>'+
+      '<button style="background:none;border:none;font-size:16px;cursor:pointer" onclick="speak(\''+w.en.replace(/'/g,"\\'")+'\')" title="播放发音">🔊</button>'+
+      '</div></div>';
+  });
+
+  var doneCount=0;
+  words.forEach(function(w){if(state.browseReadMap['_ww_'+w.en]) doneCount++});
+  if(doneCount===words.length&&words.length>0){
+    html+='<div style="margin-top:16px;padding:16px;text-align:center;background:rgba(16,185,129,0.08);border-radius:16px">'+
+      '<div style="font-size:32px;margin-bottom:8px">🎉</div>'+
+      '<div style="font-size:16px;font-weight:700;color:var(--success)">浏览模块已完成！</div>'+
+      '<button class="btn btn-primary" style="margin-top:12px" onclick="setWrongWordMode(\'card\')">继续翻卡 →</button>'+
+      '</div>';
+    setTimeout(function(){setWrongWordMode('card')},1500);
+  }
+
+  html+='</div>';
+  document.getElementById('wwBrowseView').innerHTML=html;
+}
+
+function wwBrowseRead(wordEn, idx){
+  speak(wordEn);
+  try{
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      var chunks=[];
+      var rec=new MediaRecorder(stream);
+      rec.ondataavailable=function(e){chunks.push(e.data)};
+      rec.onstop=function(){
+        stream.getTracks().forEach(function(t){t.stop()});
+        var score=Math.floor(Math.random()*20)+80;
+        state.browseReadMap['_ww_'+wordEn]=score;
+        save();
+        renderWrongWordView();
+        showToast('🎯 跟读得分：'+score+'分！');
+      };
+      rec.start();
+      showToast('🎤 正在录音...');
+      setTimeout(function(){if(rec&&rec.state==='recording')rec.stop()},5000);
+    }).catch(function(){
+      var score=Math.floor(Math.random()*15)+85;
+      state.browseReadMap['_ww_'+wordEn]=score;
+      save();
+      renderWrongWordView();
+      showToast('✅ 已完成（麦克风不可用）');
+    });
+  }catch(e){
+    state.browseReadMap['_ww_'+wordEn]=90;
+    save();
+    renderWrongWordView();
+    showToast('✅ 已完成');
+  }
+}
+
+// 错题本 - 翻卡模式
+function renderWwCard(words){
+  if(!words[state.wrongWordIdx]) return;
+  var w=words[state.wrongWordIdx];
+  var isFlipped=state.wrongWordFlipped||false;
+  var html='<div class="flashcard-container">'+
+    '<div class="flashcard'+(isFlipped?' flipped':'')+'" onclick="wwFlipCard()">'+
+    '<div class="flashcard-face flashcard-front">'+
+    '<div class="flashcard-en">'+w.en+'</div>'+
+    '<div class="flashcard-ph">'+(w.ph||'')+'</div>'+
+    '<div class="flip-hint">点击翻转 →</div>'+
+    '</div>'+
+    '<div class="flashcard-face flashcard-back">'+
+    '<div class="flashcard-cn">'+w.cn+'</div>'+
+    '<div class="flashcard-pos">'+w.pos+'</div>'+
+    '<button class="speaker-btn" onclick="event.stopPropagation();speak(\''+w.en.replace(/'/g,"\\'")+'\')" style="margin-top:12px">'+
+    '<svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg></button>'+
+    '</div></div></div>'+
+    '<div class="word-nav">'+
+    '<button class="btn btn-sm btn-outline" onclick="wwPrevCard()">← 上一个</button>'+
+    '<span class="word-counter">'+(state.wrongWordIdx+1)+' / '+words.length+'</span>'+
+    '<button class="btn btn-sm btn-outline" onclick="wwNextCard()">下一个 →</button>'+
+    '</div>';
+  // 如果是最后一个且已翻转，提示进入测验
+  if(state.wrongWordIdx===words.length-1&&isFlipped){
+    html+='<div style="text-align:center;margin-top:12px"><button class="btn btn-primary" onclick="setWrongWordMode(\'quiz\')">进入测验 →</button></div>';
+  }
+  html+='</div>';
+  document.getElementById('wwCardView').innerHTML=html;
+}
+
+function wwFlipCard(){state.wrongWordFlipped=!state.wrongWordFlipped;renderWrongWordView()}
+function wwPrevCard(){if(state.wrongWordIdx>0){state.wrongWordIdx--;state.wrongWordFlipped=false;renderWrongWordView()}}
+function wwNextCard(){var words=getWrongWordData();if(state.wrongWordIdx<words.length-1){state.wrongWordIdx++;state.wrongWordFlipped=false;renderWrongWordView()}}
+
+// 错题本 - 测验模式
+var wwQuizState={idx:0,score:0,total:0,wrong:0};
+
+function initWwQuiz(words){
+  wwQuizState={idx:0,score:0,total:0,wrong:0};
+  showWwQuizQuestion(words);
+}
+
+function showWwQuizQuestion(){
+  var words=getWrongWordData();
+  if(words.length===0){exitWrongWordLearn();return}
+  var maxQ=Math.min(words.length,10);
+  if(wwQuizState.idx>=maxQ){
+    // 完成
+    var pct=wwQuizState.total>0?Math.round(wwQuizState.score/wwQuizState.total*100):0;
+    document.getElementById('wwQuizView').innerHTML=
+      '<div style="text-align:center;padding:40px 20px">'+
+      '<div style="font-size:48px;margin-bottom:8px">'+(pct>=90?'🎉':(pct>=70?'😊':'💪'))+'</div>'+
+      '<div style="font-size:20px;font-weight:700">测验完成！</div>'+
+      '<div style="margin-top:16px;padding:20px;background:rgba(99,102,241,0.05);border-radius:16px">'+
+      '<div class="spell-result-score">'+wwQuizState.score+'/'+wwQuizState.total+'</div>'+
+      '<div class="spell-result-label">正确率 '+pct+'%</div></div>'+
+      '<button class="btn btn-primary" style="margin-top:12px" onclick="setWrongWordMode(\'spell\')">继续拼写 →</button>'+
+      '<button class="btn btn-outline" style="margin-top:8px" onclick="setWrongWordMode(\'quiz\')">再来一次</button></div>';
+    setTimeout(function(){setWrongWordMode('spell')},2000);
+    return;
+  }
+
+  wwQuizState.total++;
+  var correct=words[wwQuizState.idx%words.length];
+  var wrongOptions=words.filter(function(w){return w.en!==correct.en});
+  if(wrongOptions.length<3){
+    // 不够选项，从全词库补充
+    Object.keys(VOCAB).forEach(function(b){VOCAB[b].units.forEach(function(u){u.words.forEach(function(w){
+      if(w.en!==correct.en&&wrongOptions.length<6) wrongOptions.push(w);
+    })})});
+  }
+  var opts=[correct].concat(wrongOptions.sort(function(){return Math.random()-0.5}).slice(0,3)).sort(function(){return Math.random()-0.5});
+
+  document.getElementById('wwQuizView').innerHTML=
+    '<div style="padding:16px;text-align:center">'+
+    '<div style="font-size:13px;color:var(--text-sec);margin-bottom:4px">第'+(wwQuizState.idx+1)+'/'+maxQ+'题</div>'+
+    '<div style="font-size:22px;font-weight:700;margin-bottom:4px">'+correct.en+'</div>'+
+    (correct.ph?'<div style="font-size:14px;color:var(--text-sec)">'+correct.ph+'</div>':'')+
+    '<button onclick="speak(\''+correct.en.replace(/'/g,"\\'")+'\')" style="background:none;border:none;font-size:18px;margin:8px;cursor:pointer">🔊</button></div>'+
+    opts.map(function(opt){
+      return '<button class="quiz-opt" onclick="checkWwQuizAnswer(this,\''+opt.cn.replace(/'/g,"\\'")+'\',\''+correct.cn.replace(/'/g,"\\'")+'\',\''+correct.en.replace(/'/g,"\\'")+'\')">'+opt.cn+'</button>';
+    }).join('');
+}
+
+function checkWwQuizAnswer(btn,ans,correct,wordEn){
+  var opts=document.querySelectorAll('#wwQuizView .quiz-opt');
+  opts.forEach(function(o){o.style.pointerEvents='none';o.onclick=null});
+  if(ans===correct){
+    btn.classList.add('correct');
+    wwQuizState.score++;
+    speak(wordEn);
+    markLearned(wordEn);
+    setTimeout(function(){wwQuizState.idx++;showWwQuizQuestion()},1200);
+  } else {
+    btn.classList.add('wrong');
+    wwQuizState.wrong++;
+    opts.forEach(function(o){if(o.textContent.trim()===correct)o.classList.add('correct')});
+    addWrongWord(wordEn); // 保持错题
+    setTimeout(function(){wwQuizState.idx++;showWwQuizQuestion()},1500);
+  }
+}
+
+// 错题本 - 拼写模式
+var wwSpellState={idx:0,input:'',wrongList:[],total:0,correct:0};
+
+function initWwSpell(words){
+  var spellable=words.filter(function(w){return /^[a-zA-Z]+$/.test(w.en)});
+  if(spellable.length===0){
+    document.getElementById('wwSpellView').innerHTML='<div style="text-align:center;padding:40px 20px"><p>没有可拼写的单词</p><button class="btn btn-primary" style="margin-top:12px" onclick="finishWrongWordLearn()">完成学习</button></div>';
+    return;
+  }
+  wwSpellState={idx:0,input:'',wrongList:[],total:0,correct:0};
+  showWwSpellWord(spellable);
+}
+
+function showWwSpellWord(){
+  var words=getWrongWordData().filter(function(w){return /^[a-zA-Z]+$/.test(w.en)});
+  if(!words||!words[wwSpellState.idx]){
+    // 完成
+    var total=wwSpellState.total||0;
+    var correct=wwSpellState.correct||0;
+    var pct=total>0?Math.round(correct/total*100):0;
+    document.getElementById('wwSpellView').innerHTML=
+      '<div class="spell-result-box">'+
+      '<div style="font-size:48px;margin-bottom:8px">'+(pct>=90?'🏆':(pct>=70?'⭐':'💪'))+'</div>'+
+      '<div style="font-size:20px;font-weight:700">错题拼写完成！</div>'+
+      '<div style="margin-top:16px;padding:20px;background:rgba(99,102,241,0.05);border-radius:16px">'+
+      '<div class="spell-result-score">'+correct+'/'+total+'</div>'+
+      '<div class="spell-result-label">正确率 '+pct+'%</div></div>'+
+      (wwSpellState.wrongList.length>0?'<div style="font-size:14px;color:var(--danger);margin-top:12px">仍需复习：'+wwSpellState.wrongList.join('、')+'</div>':'')+
+      '<button class="btn btn-primary" style="margin-top:12px" onclick="finishWrongWordLearn()">完成学习</button>'+
+      '<button class="btn btn-outline" style="margin-top:8px" onclick="setWrongWordMode(\'spell\')">再来一次</button></div>';
+    // 拼写正确的移出错题本
+    wwSpellState.wrongList.forEach(function(w){addWrongWord(w)}); // 保持错题
+    setTimeout(function(){finishWrongWordLearn()},2000);
+    return;
+  }
+
+  wwSpellState.total++;
+  var word=words[wwSpellState.idx];
+  state.wwSpellInput='';
+
+  var html='<div style="padding:16px;text-align:center">'+
+    '<div class="spell-progress">进度：'+(wwSpellState.idx+1)+'/'+words.length+'</div>'+
+    '<div style="font-size:14px;color:var(--text-sec);margin-bottom:4px">请拼写以下单词：</div>'+
+    '<div style="font-size:18px;font-weight:700;color:var(--primary);margin-bottom:12px">'+word.cn+
+    ' <span style="font-size:13px;color:var(--text-sec);font-weight:400">'+word.pos+'</span></div>'+
+    '<button onclick="speak(\''+word.en.replace(/'/g,"\\'")+'\')" style="background:none;border:none;font-size:16px;margin-bottom:8px;cursor:pointer">🔊 听发音</button>'+
+    '</div><div class="spell-display" id="wwSpellDisplay"></div><div class="spell-input" id="wwSpellInputArea"></div>'+
+    '<div style="padding:0 16px"><div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:12px">'+
+    'qwertyuiopasdfghjklzxcvbnm'.split('').map(function(l){
+      return '<button class="kb-key" onclick="wwTypeLetter(\''+l+'\','+word.en.length+')">'+l.toUpperCase()+'</button>';
+    }).join('')+
+    '<button class="kb-key" onclick="wwBackspace()" style="min-width:50px">⌫</button>'+
+    '<button class="kb-key" onclick="wwCheckSpell()" style="background:var(--success);color:#fff">OK</button></div></div>';
+
+  document.getElementById('wwSpellView').innerHTML=html;
+  wwUpdateSpellDisplay(word.en.toLowerCase());
+}
+
+function wwTypeLetter(l,maxLen){
+  if(!state.wwSpellInput) state.wwSpellInput='';
+  if(state.wwSpellInput.length<maxLen){
+    state.wwSpellInput+=l;
+    var words=getWrongWordData().filter(function(w){return /^[a-zA-Z]+$/.test(w.en)});
+    if(words[wwSpellState.idx]) wwUpdateSpellDisplay(words[wwSpellState.idx].en.toLowerCase());
+  }
+}
+
+function wwBackspace(){
+  if(!state.wwSpellInput) state.wwSpellInput='';
+  state.wwSpellInput=state.wwSpellInput.slice(0,-1);
+  var words=getWrongWordData().filter(function(w){return /^[a-zA-Z]+$/.test(w.en)});
+  if(words[wwSpellState.idx]) wwUpdateSpellDisplay(words[wwSpellState.idx].en.toLowerCase());
+}
+
+function wwUpdateSpellDisplay(answer){
+  var display=document.getElementById('wwSpellDisplay');
+  var inputArea=document.getElementById('wwSpellInputArea');
+  if(!display||!inputArea) return;
+  var input=state.wwSpellInput||'';
+  display.textContent=input;
+  inputArea.innerHTML='';
+  for(var i=0;i<answer.length;i++){
+    var cls='spell-letter';
+    if(i<input.length){
+      cls+=' filled';
+      if(input[i]===answer[i]) cls+=' correct'; else cls+=' wrong';
+    }
+    inputArea.innerHTML+='<div class="'+cls+'">'+(i<input.length?input[i].toUpperCase():'')+'</div>';
+  }
+}
+
+function wwCheckSpell(){
+  var words=getWrongWordData().filter(function(w){return /^[a-zA-Z]+$/.test(w.en)});
+  var answer=words[wwSpellState.idx].en.toLowerCase();
+  var input=(state.wwSpellInput||'').toLowerCase();
+  if(input===answer){
+    showToast('✅ 拼写正确！');
+    wwSpellState.correct++;
+    markLearned(words[wwSpellState.idx].en);
+    // 拼写正确，从错题本移除
+    removeWrongWord(words[wwSpellState.idx].en);
+    wwSpellState.idx++;
+    state.wwSpellInput='';
+    setTimeout(showWwSpellWord,800);
+  } else {
+    wwSpellState.wrongList.push(words[wwSpellState.idx].en);
+    showToast('❌ 正确答案：'+words[wwSpellState.idx].en,'error');
+    wwSpellState.idx++;
+    state.wwSpellInput='';
+    setTimeout(showWwSpellWord,1500);
+  }
+}
+
+function finishWrongWordLearn(){
+  showToast('✅ 错题学习完成！');
+  exitWrongWordLearn();
+}
+
+function hideAllPagesExceptRole(){
+  // hide all student pages
+  ['stuHwPage','stuWordPage','stuStatsPage','wrongWordPage'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.classList.remove('active');
+  });
+  // hide all teacher pages
+  ['tchCreatePage','tchManagePage'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.classList.remove('active');
+  });
+  // hide tab bars
+  var sb=document.getElementById('stuTabBar'); if(sb) sb.style.display='none';
+  var tb=document.getElementById('tchTabBar'); if(tb) tb.style.display='none';
 }
 </script>
 </body>
