@@ -205,7 +205,13 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
 <!-- ===== ROLE SELECTION ===== -->
 <div id="rolePage" class="role-page">
   <h1>📚 英语打卡</h1>
-  <p>沪教版·2024广州专版 · 七年级</p>
+  <p>沪教版·2024广州专版</p>
+  <!-- Grade Selection -->
+  <div id="gradeSelect" style="display:flex;gap:8px;margin:16px 0 8px;width:100%">
+    <button class="nav-pill-item active" id="grade7" onclick="selectGrade('7')" style="flex:1;font-size:15px;padding:12px 8px">📘 七年级</button>
+    <button class="nav-pill-item" id="grade8" onclick="selectGrade('8')" style="flex:1;font-size:15px;padding:12px 8px">📗 八年级</button>
+    <button class="nav-pill-item" id="grade9" onclick="selectGrade('9')" style="flex:1;font-size:15px;padding:12px 8px">📙 九年级</button>
+  </div>
   <div class="role-card" onclick="selectRole('teacher')">
     <div class="role-icon">👩‍🏫</div>
     <h3>我是老师</h3>
@@ -292,8 +298,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg)
     <p>沪教版2024 · 广州专版</p>
   </div>
   <div id="bookSwitch" style="padding:12px 16px;display:flex;gap:8px">
-    <button class="nav-pill-item active" id="book7A" onclick="switchBook('7A')" style="flex:1">上册 (7A)</button>
-    <button class="nav-pill-item" id="book7B" onclick="switchBook('7B')" style="flex:1">下册 (7B)</button>
+    <button class="nav-pill-item active" id="bookA" onclick="switchBook(state.currentGrade+'A')" style="flex:1">上册</button>
+    <button class="nav-pill-item" id="bookB" onclick="switchBook(state.currentGrade+'B')" style="flex:1">下册</button>
   </div>
   <div id="unitTabs" class="unit-tabs"></div>
   <div id="wordArea">
@@ -1246,6 +1252,595 @@ const VOCAB = {
         {en:"come true",ph:"",pos:"短语",cn:"实现；成为现实"}
       ]}
     ]
+  },
+  "8A": {
+    name: "八年级上册",
+    units: [
+      { id:"8A-U1", title:"Unit 1 Look it up!", words:[
+        {en:"dinosaur",ph:"/ˈdaɪnəsɔː(r)/",pos:"n.",cn:"恐龙"},
+        {en:"intelligent",ph:"/ɪnˈtelɪdʒənt/",pos:"adj.",cn:"有才智的；聪明的"},
+        {en:"talented",ph:"/ˈtæləntɪd/",pos:"adj.",cn:"有才能的；天才的"},
+        {en:"artistic",ph:"/ɑːˈtɪstɪk/",pos:"adj.",cn:"有艺术天赋的"},
+        {en:"perhaps",ph:"/pəˈhæps/",pos:"adv.",cn:"可能；大概；也许"},
+        {en:"notebook",ph:"/ˈnəʊtbʊk/",pos:"n.",cn:"笔记本"},
+        {en:"vehicle",ph:"/ˈviːəkl/",pos:"n.",cn:"交通工具；车辆"},
+        {en:"prehistoric",ph:"/ˌpriːhɪˈstɔːrɪk/",pos:"adj.",cn:"史前的"},
+        {en:"completely",ph:"/kəmˈpliːtli/",pos:"adv.",cn:"完全地；彻底地"},
+        {en:"original",ph:"/əˈrɪdʒənl/",pos:"adj.",cn:"原来的；起初的"},
+        {en:"birth",ph:"/bɜːθ/",pos:"n.",cn:"出生"},
+        {en:"suffering",ph:"/ˈsʌfərɪŋ/",pos:"n.",cn:"苦难；疼痛"},
+        {en:"artist",ph:"/ˈɑːtɪst/",pos:"n.",cn:"艺术家；画家"},
+        {en:"death",ph:"/deθ/",pos:"n.",cn:"死；死亡"},
+        {en:"whole",ph:"/həʊl/",pos:"adj.",cn:"全部的；所有的"},
+        {en:"piece",ph:"/piːs/",pos:"n.",cn:"一首，一篇（作品）"},
+        {en:"editor",ph:"/ˈedɪtə(r)/",pos:"n.",cn:"编辑"},
+        {en:"organize",ph:"/ˈɔːɡənaɪz/",pos:"v.",cn:"安排；组织"},
+        {en:"order",ph:"/ˈɔːdə(r)/",pos:"n.",cn:"顺序"},
+        {en:"record",ph:"/ˈrekɔːd/",pos:"v.",cn:"记录"},
+        {en:"die out",ph:"",pos:"短语",cn:"灭绝"},
+        {en:"a type of",ph:"",pos:"短语",cn:"一种"},
+        {en:"be related to",ph:"",pos:"短语",cn:"与……属于同一种类"},
+        {en:"be similar to",ph:"",pos:"短语",cn:"与……相似"},
+        {en:"play an important role",ph:"",pos:"短语",cn:"起到重要作用"}
+      ]},
+      { id:"8A-U2", title:"Unit 2 Amazing numbers", words:[
+        {en:"flight",ph:"/flaɪt/",pos:"n.",cn:"航程"},
+        {en:"schedule",ph:"/ˈʃedjuːl/",pos:"n.",cn:"日程安排"},
+        {en:"everywhere",ph:"/ˈevriweə(r)/",pos:"adv.",cn:"到处；各个地方"},
+        {en:"challenge",ph:"/ˈtʃælɪndʒ/",pos:"v.",cn:"向（某人）挑战"},
+        {en:"prize",ph:"/praɪz/",pos:"n.",cn:"奖赏；奖励"},
+        {en:"promise",ph:"/ˈprɒmɪs/",pos:"v.",cn:"承诺；保证"},
+        {en:"chessboard",ph:"/ˈtʃesbɔːd/",pos:"n.",cn:"国际象棋棋盘"},
+        {en:"silver",ph:"/ˈsɪlvə(r)/",pos:"n.",cn:"银"},
+        {en:"reply",ph:"/rɪˈplaɪ/",pos:"v.",cn:"回复；答复"},
+        {en:"hesitation",ph:"/ˌhezɪˈteɪʃn/",pos:"n.",cn:"犹豫"},
+        {en:"wonder",ph:"/ˈwʌndə(r)/",pos:"v.",cn:"想知道；琢磨"},
+        {en:"agree",ph:"/əˈɡriː/",pos:"v.",cn:"同意；赞成"},
+        {en:"percent",ph:"/pəˈsent/",pos:"n.",cn:"百分之……"},
+        {en:"currently",ph:"/ˈkʌrəntli/",pos:"adv.",cn:"目前；当前"},
+        {en:"check",ph:"/tʃek/",pos:"v.",cn:"检查；核查"},
+        {en:"budget",ph:"/ˈbʌdʒɪt/",pos:"n.",cn:"预算"},
+        {en:"province",ph:"/ˈprɒvɪns/",pos:"n.",cn:"省份"},
+        {en:"sharply",ph:"/ˈʃɑːpli/",pos:"adv.",cn:"急剧地；突然大幅度地"},
+        {en:"count",ph:"/kaʊnt/",pos:"v.",cn:"计算（或清点）总数"},
+        {en:"system",ph:"/ˈsɪstəm/",pos:"n.",cn:"系统"},
+        {en:"symbol",ph:"/ˈsɪmbl/",pos:"n.",cn:"符号；记号"},
+        {en:"represent",ph:"/ˌreprɪˈzent/",pos:"v.",cn:"代表"},
+        {en:"exactly",ph:"/ɪɡˈzæktli/",pos:"adv.",cn:"准确地；确切地"},
+        {en:"flight schedule",ph:"",pos:"短语",cn:"航班时刻表"},
+        {en:"without hesitation",ph:"",pos:"短语",cn:"毫不犹豫"},
+        {en:"go up",ph:"",pos:"短语",cn:"上升"},
+        {en:"go down",ph:"",pos:"短语",cn:"下降"},
+        {en:"write down",ph:"",pos:"短语",cn:"写下；记下"},
+        {en:"instead of",ph:"",pos:"短语",cn:"代替；作为……的替换"}
+      ]},
+      { id:"8A-U3", title:"Unit 3 Our digital lives", words:[
+        {en:"network",ph:"/ˈnetwɜːk/",pos:"n.",cn:"网络"},
+        {en:"multimedia",ph:"/ˌmʌltiˈmiːdiə/",pos:"n.",cn:"多媒体"},
+        {en:"expert",ph:"/ˈekspɜːt/",pos:"n.",cn:"专家"},
+        {en:"mobile",ph:"/ˈməʊbaɪl/",pos:"adj.",cn:"可移动的"},
+        {en:"payment",ph:"/ˈpeɪmənt/",pos:"n.",cn:"付款；支付"},
+        {en:"warn",ph:"/wɔːn/",pos:"v.",cn:"提醒注意；警告"},
+        {en:"data",ph:"/ˈdeɪtə/",pos:"n.",cn:"数据"},
+        {en:"convenient",ph:"/kənˈviːniənt/",pos:"adj.",cn:"方便的；便利的"},
+        {en:"download",ph:"/ˌdaʊnˈləʊd/",pos:"v.",cn:"下载"},
+        {en:"search",ph:"/sɜːtʃ/",pos:"v.",cn:"搜索；搜寻"},
+        {en:"connect",ph:"/kəˈnekt/",pos:"v.",cn:"连接；联结"},
+        {en:"advantage",ph:"/ədˈvɑːntɪdʒ/",pos:"n.",cn:"优点；有利条件"},
+        {en:"disadvantage",ph:"/ˌdɪsədˈvɑːntɪdʒ/",pos:"n.",cn:"缺点；不利条件"},
+        {en:"software",ph:"/ˈsɒftweə(r)/",pos:"n.",cn:"软件"},
+        {en:"device",ph:"/dɪˈvaɪs/",pos:"n.",cn:"装置；设备"},
+        {en:"communicate",ph:"/kəˈmjuːnɪkeɪt/",pos:"v.",cn:"交流；沟通"},
+        {en:"technology",ph:"/tekˈnɒlədʒi/",pos:"n.",cn:"技术；科技"},
+        {en:"effect",ph:"/ɪˈfekt/",pos:"n.",cn:"效果；影响"},
+        {en:"in my opinion",ph:"",pos:"短语",cn:"在我看来"},
+        {en:"be aware of",ph:"",pos:"短语",cn:"意识到"}
+      ]},
+      { id:"8A-U4", title:"Unit 4 Inventions", words:[
+        {en:"invention",ph:"/ɪnˈvenʃn/",pos:"n.",cn:"发明；创造"},
+        {en:"invent",ph:"/ɪnˈvent/",pos:"v.",cn:"发明；创造"},
+        {en:"inventor",ph:"/ɪnˈventə(r)/",pos:"n.",cn:"发明家"},
+        {en:"comfortable",ph:"/ˈkʌmftəbl/",pos:"adj.",cn:"舒适的；舒服的"},
+        {en:"century",ph:"/ˈsentʃəri/",pos:"n.",cn:"世纪；百年"},
+        {en:"practical",ph:"/ˈpræktɪkl/",pos:"adj.",cn:"实用的；实际的"},
+        {en:"create",ph:"/kriˈeɪt/",pos:"v.",cn:"创造；创建"},
+        {en:"distance",ph:"/ˈdɪstəns/",pos:"n.",cn:"距离"},
+        {en:"imagine",ph:"/ɪˈmædʒɪn/",pos:"v.",cn:"想象"},
+        {en:"machine",ph:"/məˈʃiːn/",pos:"n.",cn:"机器；机械"},
+        {en:"powerful",ph:"/ˈpaʊəfl/",pos:"adj.",cn:"强大的；效力大的"},
+        {en:"replace",ph:"/rɪˈpleɪs/",pos:"v.",cn:"代替；替换"},
+        {en:"special",ph:"/ˈspeʃl/",pos:"adj.",cn:"特殊的；特别的"},
+        {en:"wheel",ph:"/wiːl/",pos:"n.",cn:"车轮；轮子"},
+        {en:"passenger",ph:"/ˈpæsɪndʒə(r)/",pos:"n.",cn:"乘客；旅客"},
+        {en:"modern",ph:"/ˈmɒdn/",pos:"adj.",cn:"现代的；近代的"},
+        {en:"discover",ph:"/dɪˈskʌvə(r)/",pos:"v.",cn:"发现"},
+        {en:"improve",ph:"/ɪmˈpruːv/",pos:"v.",cn:"改进；改善"},
+        {en:"at the same time",ph:"",pos:"短语",cn:"同时"},
+        {en:"make a difference",ph:"",pos:"短语",cn:"有影响；起作用"},
+        {en:"come true",ph:"",pos:"短语",cn:"实现；成为现实"}
+      ]},
+      { id:"8A-U5", title:"Unit 5 Going on an exchange trip", words:[
+        {en:"exchange",ph:"/ɪksˈtʃeɪndʒ/",pos:"n.",cn:"交流；交换"},
+        {en:"foreign",ph:"/ˈfɒrən/",pos:"adj.",cn:"外国的"},
+        {en:"culture",ph:"/ˈkʌltʃə(r)/",pos:"n.",cn:"文化"},
+        {en:"independent",ph:"/ˌɪndɪˈpendənt/",pos:"adj.",cn:"自主的；独立的"},
+        {en:"homesick",ph:"/ˈhəʊmsɪk/",pos:"adj.",cn:"想家的"},
+        {en:"lonely",ph:"/ˈləʊnli/",pos:"adj.",cn:"孤独的"},
+        {en:"anxious",ph:"/ˈæŋkʃəs/",pos:"adj.",cn:"焦虑的；忧虑的"},
+        {en:"confused",ph:"/kənˈfjuːzd/",pos:"adj.",cn:"糊涂的；迷惑的"},
+        {en:"shock",ph:"/ʃɒk/",pos:"n.",cn:"震惊；令人震惊的事"},
+        {en:"accept",ph:"/əkˈsept/",pos:"v.",cn:"接受"},
+        {en:"adapt",ph:"/əˈdæpt/",pos:"v.",cn:"适应；改编"},
+        {en:"expect",ph:"/ɪkˈspekt/",pos:"v.",cn:"期待；盼望"},
+        {en:"situation",ph:"/ˌsɪtʃuˈeɪʃn/",pos:"n.",cn:"情况；形势"},
+        {en:"host family",ph:"",pos:"短语",cn:"寄宿家庭"},
+        {en:"culture shock",ph:"",pos:"短语",cn:"文化冲击"},
+        {en:"deal with",ph:"",pos:"短语",cn:"处理；对付"},
+        {en:"feel at home",ph:"",pos:"短语",cn:"感到自在"}
+      ]},
+      { id:"8A-U6", title:"Unit 6 Wisdom counts", words:[
+        {en:"wisdom",ph:"/ˈwɪzdəm/",pos:"n.",cn:"智慧"},
+        {en:"author",ph:"/ˈɔːθə(r)/",pos:"n.",cn:"作者；作家"},
+        {en:"remains",ph:"/rɪˈmeɪnz/",pos:"n.",cn:"遗迹；遗址"},
+        {en:"soldier",ph:"/ˈsəʊldʒə(r)/",pos:"n.",cn:"士兵"},
+        {en:"captain",ph:"/ˈkæptɪn/",pos:"n.",cn:"首领；领导者"},
+        {en:"empty",ph:"/ˈempti/",pos:"adj.",cn:"空的"},
+        {en:"victory",ph:"/ˈvɪktəri/",pos:"n.",cn:"胜利；成功"},
+        {en:"joke",ph:"/dʒəʊk/",pos:"n.",cn:"笑话"},
+        {en:"courage",ph:"/ˈkʌrɪdʒ/",pos:"n.",cn:"勇气；胆量"},
+        {en:"strategy",ph:"/ˈstrætədʒi/",pos:"n.",cn:"策略；计策"},
+        {en:"defeat",ph:"/dɪˈfiːt/",pos:"v.",cn:"打败；战胜"},
+        {en:"attack",ph:"/əˈtæk/",pos:"v.",cn:"攻击；进攻"},
+        {en:"defend",ph:"/dɪˈfend/",pos:"v.",cn:"防御；保卫"},
+        {en:"wise",ph:"/waɪz/",pos:"adj.",cn:"聪明的；明智的"},
+        {en:"trick",ph:"/trɪk/",pos:"n.",cn:"计谋；把戏"},
+        {en:"escape",ph:"/ɪˈskeɪp/",pos:"v.",cn:"逃跑；逃脱"},
+        {en:"surround",ph:"/səˈraʊnd/",pos:"v.",cn:"包围"},
+        {en:"protect",ph:"/prəˈtekt/",pos:"v.",cn:"保护"},
+        {en:"at last",ph:"",pos:"短语",cn:"终于；最终"},
+        {en:"give up",ph:"",pos:"短语",cn:"放弃"},
+        {en:"come up with",ph:"",pos:"短语",cn:"想出；提出"},
+        {en:"be proud of",ph:"",pos:"短语",cn:"为……感到骄傲"}
+      ]},
+      { id:"8A-U7", title:"Unit 7 The secret of memory", words:[
+        {en:"memory",ph:"/ˈmeməri/",pos:"n.",cn:"记忆；记忆力"},
+        {en:"mind",ph:"/maɪnd/",pos:"n.",cn:"头脑；大脑"},
+        {en:"brain",ph:"/breɪn/",pos:"n.",cn:"脑"},
+        {en:"repeat",ph:"/rɪˈpiːt/",pos:"v.",cn:"重复"},
+        {en:"method",ph:"/ˈmeθəd/",pos:"n.",cn:"方法；办法"},
+        {en:"concentrate",ph:"/ˈkɒnsntreɪt/",pos:"v.",cn:"集中注意力"},
+        {en:"review",ph:"/rɪˈvjuː/",pos:"v.",cn:"复习；回顾"},
+        {en:"forget",ph:"/fəˈɡet/",pos:"v.",cn:"忘记"},
+        {en:"remember",ph:"/rɪˈmembə(r)/",pos:"v.",cn:"记住；记起"},
+        {en:"detail",ph:"/ˈdiːteɪl/",pos:"n.",cn:"细节"},
+        {en:"ability",ph:"/əˈbɪləti/",pos:"n.",cn:"能力；才能"},
+        {en:"skill",ph:"/skɪl/",pos:"n.",cn:"技巧；技能"},
+        {en:"practice",ph:"/ˈpræktɪs/",pos:"n.",cn:"练习；实践"},
+        {en:"attention",ph:"/əˈtenʃn/",pos:"n.",cn:"注意力；关注"},
+        {en:"tip",ph:"/tɪp/",pos:"n.",cn:"提示；建议"},
+        {en:"pay attention to",ph:"",pos:"短语",cn:"注意"},
+        {en:"in order to",ph:"",pos:"短语",cn:"为了"},
+        {en:"take a break",ph:"",pos:"短语",cn:"休息一下"}
+      ]},
+      { id:"8A-U8", title:"Unit 8 Pets and us", words:[
+        {en:"pet",ph:"/pet/",pos:"n.",cn:"宠物"},
+        {en:"owner",ph:"/ˈəʊnə(r)/",pos:"n.",cn:"主人；物主"},
+        {en:"feed",ph:"/fiːd/",pos:"v.",cn:"喂养；饲养"},
+        {en:"care",ph:"/keə(r)/",pos:"v.",cn:"关心；照顾"},
+        {en:"train",ph:"/treɪn/",pos:"v.",cn:"训练；培训"},
+        {en:"obey",ph:"/əˈbeɪ/",pos:"v.",cn:"服从；遵守"},
+        {en:"protect",ph:"/prəˈtekt/",pos:"v.",cn:"保护"},
+        {en:"responsible",ph:"/rɪˈspɒnsəbl/",pos:"adj.",cn:"负责任的"},
+        {en:"faithful",ph:"/ˈfeɪθfl/",pos:"adj.",cn:"忠诚的；忠实的"},
+        {en:"company",ph:"/ˈkʌmpəni/",pos:"n.",cn:"陪伴；同伴"},
+        {en:"comfort",ph:"/ˈkʌmfət/",pos:"n.",cn:"安慰；舒适"},
+        {en:"health",ph:"/helθ/",pos:"n.",cn:"健康"},
+        {en:"disease",ph:"/dɪˈziːz/",pos:"n.",cn:"疾病"},
+        {en:"rescue",ph:"/ˈreskjuː/",pos:"v.",cn:"营救；拯救"},
+        {en:"adopt",ph:"/əˈdɒpt/",pos:"v.",cn:"收养；领养"},
+        {en:"abandon",ph:"/əˈbændən/",pos:"v.",cn:"遗弃；抛弃"},
+        {en:"take care of",ph:"",pos:"短语",cn:"照顾"},
+        {en:"be faithful to",ph:"",pos:"短语",cn:"对……忠诚"},
+        {en:"depend on",ph:"",pos:"短语",cn:"依靠；依赖"},
+        {en:"be responsible for",ph:"",pos:"短语",cn:"对……负责"}
+      ]}
+    ]
+  },
+  "8B": {
+    name: "八年级下册",
+    units: [
+      { id:"8B-U1", title:"Unit 1 Helping those in need", words:[
+        {en:"raise",ph:"/reɪz/",pos:"v.",cn:"筹集（资金）"},
+        {en:"permission",ph:"/pəˈmɪʃn/",pos:"n.",cn:"允许；准许"},
+        {en:"disabled",ph:"/dɪsˈeɪbld/",pos:"adj.",cn:"残疾的"},
+        {en:"teenager",ph:"/ˈtiːneɪdʒə(r)/",pos:"n.",cn:"青少年"},
+        {en:"offer",ph:"/ˈɒfə(r)/",pos:"v.",cn:"主动提出"},
+        {en:"suffer",ph:"/ˈsʌfə(r)/",pos:"v.",cn:"受苦；受折磨"},
+        {en:"serious",ph:"/ˈsɪəriəs/",pos:"adj.",cn:"严重的；严肃的"},
+        {en:"illness",ph:"/ˈɪlnəs/",pos:"n.",cn:"病；疾病"},
+        {en:"organize",ph:"/ˈɔːɡənaɪz/",pos:"v.",cn:"组织；安排"},
+        {en:"express",ph:"/ɪkˈspres/",pos:"v.",cn:"表达；表示"},
+        {en:"pain",ph:"/peɪn/",pos:"n.",cn:"痛苦；疼痛"},
+        {en:"friendship",ph:"/ˈfrendʃɪp/",pos:"n.",cn:"友谊"},
+        {en:"joy",ph:"/dʒɔɪ/",pos:"n.",cn:"欢乐；高兴"},
+        {en:"peace",ph:"/piːs/",pos:"n.",cn:"和平；安宁"},
+        {en:"courage",ph:"/ˈkʌrɪdʒ/",pos:"n.",cn:"勇气"},
+        {en:"voluntary",ph:"/ˈvɒləntri/",pos:"adj.",cn:"自愿的；志愿的"},
+        {en:"community",ph:"/kəˈmjuːnəti/",pos:"n.",cn:"社区"},
+        {en:"support",ph:"/səˈpɔːt/",pos:"v.",cn:"支持"},
+        {en:"in need",ph:"",pos:"短语",cn:"在困难中"},
+        {en:"voluntary work",ph:"",pos:"短语",cn:"义务工作"},
+        {en:"raise money",ph:"",pos:"短语",cn:"筹款"},
+        {en:"give sb. a hand",ph:"",pos:"短语",cn:"帮助某人"}
+      ]},
+      { id:"8B-U2", title:"Unit 2 Body language", words:[
+        {en:"communication",ph:"/kəˌmjuːnɪˈkeɪʃn/",pos:"n.",cn:"交流；沟通"},
+        {en:"gesture",ph:"/ˈdʒestʃə(r)/",pos:"n.",cn:"手势；姿势"},
+        {en:"reject",ph:"/rɪˈdʒekt/",pos:"v.",cn:"拒绝"},
+        {en:"meaning",ph:"/ˈmiːnɪŋ/",pos:"n.",cn:"意思；含义"},
+        {en:"message",ph:"/ˈmesɪdʒ/",pos:"n.",cn:"信息；消息"},
+        {en:"nod",ph:"/nɒd/",pos:"v.",cn:"点头"},
+        {en:"shake",ph:"/ʃeɪk/",pos:"v.",cn:"摇动；摇头"},
+        {en:"expression",ph:"/ɪkˈspreʃn/",pos:"n.",cn:"表情；表达"},
+        {en:"appearance",ph:"/əˈpɪərəns/",pos:"n.",cn:"外貌；外表"},
+        {en:"impression",ph:"/ɪmˈpreʃn/",pos:"n.",cn:"印象"},
+        {en:"towards",ph:"/təˈwɔːdz/",pos:"prep.",cn:"向；朝"},
+        {en:"hold",ph:"/həʊld/",pos:"v.",cn:"举行；拿着"},
+        {en:"remind",ph:"/rɪˈmaɪnd/",pos:"v.",cn:"提醒"},
+        {en:"part-time",ph:"/ˌpɑːtˈtaɪm/",pos:"adj.",cn:"兼职的"},
+        {en:"body language",ph:"",pos:"短语",cn:"肢体语言"},
+        {en:"make a good impression",ph:"",pos:"短语",cn:"留下好印象"},
+        {en:"look up",ph:"",pos:"短语",cn:"抬头看；查阅"}
+      ]},
+      { id:"8B-U3", title:"Unit 3 Comics and animation", words:[
+        {en:"comic",ph:"/ˈkɒmɪk/",pos:"n.",cn:"连环画；漫画"},
+        {en:"animation",ph:"/ˌænɪˈmeɪʃn/",pos:"n.",cn:"动画片；动画"},
+        {en:"character",ph:"/ˈkærəktə(r)/",pos:"n.",cn:"人物；角色"},
+        {en:"effect",ph:"/ɪˈfekt/",pos:"n.",cn:"效果"},
+        {en:"cartoon",ph:"/kɑːˈtuːn/",pos:"n.",cn:"卡通；动画片"},
+        {en:"hero",ph:"/ˈhɪərəʊ/",pos:"n.",cn:"英雄；男主角"},
+        {en:"villain",ph:"/ˈvɪlən/",pos:"n.",cn:"反派角色；坏人"},
+        {en:"plot",ph:"/plɒt/",pos:"n.",cn:"情节"},
+        {en:"scene",ph:"/siːn/",pos:"n.",cn:"场景；场面"},
+        {en:"dialogue",ph:"/ˈdaɪəlɒɡ/",pos:"n.",cn:"对话"},
+        {en:"humour",ph:"/ˈhjuːmə(r)/",pos:"n.",cn:"幽默"},
+        {en:"attract",ph:"/əˈtrækt/",pos:"v.",cn:"吸引"},
+        {en:"popular",ph:"/ˈpɒpjələ(r)/",pos:"adj.",cn:"受欢迎的；流行的"},
+        {en:"classic",ph:"/ˈklæsɪk/",pos:"adj.",cn:"经典的"},
+        {en:"entertainment",ph:"/ˌentəˈteɪnmənt/",pos:"n.",cn:"娱乐"},
+        {en:"audience",ph:"/ˈɔːdiəns/",pos:"n.",cn:"观众；听众"},
+        {en:"be popular with",ph:"",pos:"短语",cn:"受……欢迎"},
+        {en:"play a role",ph:"",pos:"短语",cn:"扮演角色"}
+      ]},
+      { id:"8B-U4", title:"Unit 4 Arts and heritage", words:[
+        {en:"heritage",ph:"/ˈherɪtɪdʒ/",pos:"n.",cn:"遗产；传统"},
+        {en:"traditional",ph:"/trəˈdɪʃənl/",pos:"adj.",cn:"传统的"},
+        {en:"craft",ph:"/krɑːft/",pos:"n.",cn:"手艺；工艺"},
+        {en:"sculpture",ph:"/ˈskʌlptʃə(r)/",pos:"n.",cn:"雕塑；雕刻"},
+        {en:"painting",ph:"/ˈpeɪntɪŋ/",pos:"n.",cn:"绘画；画作"},
+        {en:"masterpiece",ph:"/ˈmɑːstəpiːs/",pos:"n.",cn:"杰作；名著"},
+        {en:"preserve",ph:"/prɪˈzɜːv/",pos:"v.",cn:"保存；保护"},
+        {en:"architecture",ph:"/ˈɑːkɪtektʃə(r)/",pos:"n.",cn:"建筑；建筑学"},
+        {en:"treasure",ph:"/ˈtreʒə(r)/",pos:"n.",cn:"珍宝；宝物"},
+        {en:"ancient",ph:"/ˈeɪnʃənt/",pos:"adj.",cn:"古代的；古老的"},
+        {en:"dynasty",ph:"/ˈdɪnəsti/",pos:"n.",cn:"朝代；王朝"},
+        {en:"exhibition",ph:"/ˌeksɪˈbɪʃn/",pos:"n.",cn:"展览；展示"},
+        {en:"museum",ph:"/mjuˈziːəm/",pos:"n.",cn:"博物馆"},
+        {en:"gallery",ph:"/ˈɡæləri/",pos:"n.",cn:"画廊；美术馆"},
+        {en:"be proud of",ph:"",pos:"短语",cn:"为……骄傲"},
+        {en:"pass down",ph:"",pos:"短语",cn:"传下来；流传"},
+        {en:"be known as",ph:"",pos:"短语",cn:"被称为"}
+      ]},
+      { id:"8B-U5", title:"Unit 5 Saving animals in danger", words:[
+        {en:"endangered",ph:"/ɪnˈdeɪndʒəd/",pos:"adj.",cn:"濒危的"},
+        {en:"extinct",ph:"/ɪkˈstɪŋkt/",pos:"adj.",cn:"灭绝的"},
+        {en:"habitat",ph:"/ˈhæbɪtæt/",pos:"n.",cn:"栖息地"},
+        {en:"pollution",ph:"/pəˈluːʃn/",pos:"n.",cn:"污染"},
+        {en:"destroy",ph:"/dɪˈstrɔɪ/",pos:"v.",cn:"破坏；毁灭"},
+        {en:"conservation",ph:"/ˌkɒnsəˈveɪʃn/",pos:"n.",cn:"保护；保存"},
+        {en:"wildlife",ph:"/ˈwaɪldlaɪf/",pos:"n.",cn:"野生动物"},
+        {en:"species",ph:"/ˈspiːʃiːz/",pos:"n.",cn:"物种"},
+        {en:"hunt",ph:"/hʌnt/",pos:"v.",cn:"猎杀；打猎"},
+        {en:"illegal",ph:"/ɪˈliːɡl/",pos:"adj.",cn:"非法的；违法的"},
+        {en:"threat",ph:"/θret/",pos:"n.",cn:"威胁"},
+        {en:"survive",ph:"/səˈvaɪv/",pos:"v.",cn:"存活；幸存"},
+        {en:"rare",ph:"/reə(r)/",pos:"adj.",cn:"稀有的；罕见的"},
+        {en:"reserve",ph:"/rɪˈzɜːv/",pos:"n.",cn:"保护区"},
+        {en:"in danger",ph:"",pos:"短语",cn:"处于危险中"},
+        {en:"die out",ph:"",pos:"短语",cn:"灭绝"},
+        {en:"take action",ph:"",pos:"短语",cn:"采取行动"}
+      ]},
+      { id:"8B-U6", title:"Unit 6 Learning by doing", words:[
+        {en:"experiment",ph:"/ɪkˈsperɪmənt/",pos:"n.",cn:"实验；试验"},
+        {en:"observe",ph:"/əbˈzɜːv/",pos:"v.",cn:"观察"},
+        {en:"research",ph:"/rɪˈsɜːtʃ/",pos:"n.",cn:"研究；调查"},
+        {en:"conclusion",ph:"/kənˈkluːʒn/",pos:"n.",cn:"结论"},
+        {en:"result",ph:"/rɪˈzʌlt/",pos:"n.",cn:"结果"},
+        {en:"process",ph:"/ˈprəʊses/",pos:"n.",cn:"过程；流程"},
+        {en:"method",ph:"/ˈmeθəd/",pos:"n.",cn:"方法"},
+        {en:"measure",ph:"/ˈmeʒə(r)/",pos:"v.",cn:"测量"},
+        {en:"compare",ph:"/kəmˈpeə(r)/",pos:"v.",cn:"比较；对比"},
+        {en:"analyze",ph:"/ˈænəlaɪz/",pos:"v.",cn:"分析"},
+        {en:"evidence",ph:"/ˈevɪdəns/",pos:"n.",cn:"证据；证明"},
+        {en:"theory",ph:"/ˈθɪəri/",pos:"n.",cn:"理论；学说"},
+        {en:"practical",ph:"/ˈpræktɪkl/",pos:"adj.",cn:"实践的；实际的"},
+        {en:"carry out",ph:"",pos:"短语",cn:"执行；实施"},
+        {en:"be based on",ph:"",pos:"短语",cn:"基于"}
+      ]},
+      { id:"8B-U7", title:"Unit 7 Space exploration", words:[
+        {en:"exploration",ph:"/ˌekspləˈreɪʃn/",pos:"n.",cn:"探索；探险"},
+        {en:"spacecraft",ph:"/ˈspeɪskrɑːft/",pos:"n.",cn:"航天器；宇宙飞船"},
+        {en:"astronaut",ph:"/ˈæstrənɔːt/",pos:"n.",cn:"宇航员"},
+        {en:"launch",ph:"/lɔːntʃ/",pos:"v.",cn:"发射"},
+        {en:"orbit",ph:"/ˈɔːbɪt/",pos:"n.",cn:"轨道"},
+        {en:"gravity",ph:"/ˈɡrævəti/",pos:"n.",cn:"重力；引力"},
+        {en:"satellite",ph:"/ˈsætəlaɪt/",pos:"n.",cn:"卫星"},
+        {en:"telescope",ph:"/ˈtelɪskəʊp/",pos:"n.",cn:"望远镜"},
+        {en:"universe",ph:"/ˈjuːnɪvɜːs/",pos:"n.",cn:"宇宙"},
+        {en:"planet",ph:"/ˈplænɪt/",pos:"n.",cn:"行星"},
+        {en:"galaxy",ph:"/ˈɡæləksi/",pos:"n.",cn:"星系；银河"},
+        {en:"atmosphere",ph:"/ˈætməsfɪə(r)/",pos:"n.",cn:"大气层"},
+        {en:"mission",ph:"/ˈmɪʃn/",pos:"n.",cn:"任务；使命"},
+        {en:"rocket",ph:"/ˈrɒkɪt/",pos:"n.",cn:"火箭"},
+        {en:"surface",ph:"/ˈsɜːfɪs/",pos:"n.",cn:"表面；表层"},
+        {en:"set off",ph:"",pos:"短语",cn:"出发；动身"},
+        {en:"so far",ph:"",pos:"短语",cn:"到目前为止"}
+      ]},
+      { id:"8B-U8", title:"Unit 8 Imagine that!", words:[
+        {en:"imagine",ph:"/ɪˈmædʒɪn/",pos:"v.",cn:"想象"},
+        {en:"fiction",ph:"/ˈfɪkʃn/",pos:"n.",cn:"小说；虚构"},
+        {en:"future",ph:"/ˈfjuːtʃə(r)/",pos:"n.",cn:"未来；将来"},
+        {en:"predict",ph:"/prɪˈdɪkt/",pos:"v.",cn:"预测；预言"},
+        {en:"invention",ph:"/ɪnˈvenʃn/",pos:"n.",cn:"发明"},
+        {en:"technology",ph:"/tekˈnɒlədʒi/",pos:"n.",cn:"技术"},
+        {en:"artificial",ph:"/ˌɑːtɪˈfɪʃl/",pos:"adj.",cn:"人工的；人造的"},
+        {en:"virtual",ph:"/ˈvɜːtʃuəl/",pos:"adj.",cn:"虚拟的"},
+        {en:"reality",ph:"/riˈæləti/",pos:"n.",cn:"现实；真实"},
+        {en:"possibility",ph:"/ˌpɒsəˈbɪləti/",pos:"n.",cn:"可能性"},
+        {en:"advance",ph:"/ədˈvɑːns/",pos:"n.",cn:"进步；进展"},
+        {en:"revolution",ph:"/ˌrevəˈluːʃn/",pos:"n.",cn:"革命；变革"},
+        {en:"transport",ph:"/ˈtrænspɔːt/",pos:"n.",cn:"交通工具；运输"},
+        {en:"efficient",ph:"/ɪˈfɪʃnt/",pos:"adj.",cn:"高效的"},
+        {en:"sustainable",ph:"/səˈsteɪnəbl/",pos:"adj.",cn:"可持续的"},
+        {en:"in the future",ph:"",pos:"短语",cn:"在未来"},
+        {en:"dream of",ph:"",pos:"短语",cn:"梦想"},
+        {en:"make progress",ph:"",pos:"短语",cn:"取得进步"}
+      ]}
+    ]
+  },
+  "9A": {
+    name: "九年级上册",
+    units: [
+      { id:"9A-U1", title:"Unit 1 Wise men in history", words:[
+        {en:"golden",ph:"/ˈɡəʊldən/",pos:"adj.",cn:"金色的；黄金的"},
+        {en:"crown",ph:"/kraʊn/",pos:"n.",cn:"王冠；皇冠"},
+        {en:"compete",ph:"/kəmˈpiːt/",pos:"v.",cn:"竞争；比赛"},
+        {en:"athlete",ph:"/ˈæθliːt/",pos:"n.",cn:"运动员"},
+        {en:"ancient",ph:"/ˈeɪnʃənt/",pos:"adj.",cn:"古代的；古老的"},
+        {en:"discover",ph:"/dɪˈskʌvə(r)/",pos:"v.",cn:"发现"},
+        {en:"truth",ph:"/truːθ/",pos:"n.",cn:"真相；事实"},
+        {en:"doubt",ph:"/daʊt/",pos:"v.",cn:"怀疑"},
+        {en:"real",ph:"/rɪəl/",pos:"adj.",cn:"真的；真实的"},
+        {en:"fill",ph:"/fɪl/",pos:"v.",cn:"装满；填满"},
+        {en:"certain",ph:"/ˈsɜːtn/",pos:"adj.",cn:"确定的；肯定的"},
+        {en:"prison",ph:"/ˈprɪzn/",pos:"n.",cn:"监狱"},
+        {en:"be made of",ph:"",pos:"短语",cn:"由……制成"},
+        {en:"be happy with",ph:"",pos:"短语",cn:"对……满意"},
+        {en:"fill...with...",ph:"",pos:"短语",cn:"用……装满……"},
+        {en:"send...to prison",ph:"",pos:"短语",cn:"把……送进监狱"}
+      ]},
+      { id:"9A-U2", title:"Unit 2 Great minds", words:[
+        {en:"genius",ph:"/ˈdʒiːniəs/",pos:"n.",cn:"天才"},
+        {en:"gifted",ph:"/ˈɡɪftɪd/",pos:"adj.",cn:"有天赋的"},
+        {en:"consider",ph:"/kənˈsɪdə(r)/",pos:"v.",cn:"认为；考虑"},
+        {en:"university",ph:"/ˌjuːnɪˈvɜːsəti/",pos:"n.",cn:"大学"},
+        {en:"theory",ph:"/ˈθɪəri/",pos:"n.",cn:"理论；学说"},
+        {en:"research",ph:"/rɪˈsɜːtʃ/",pos:"n.",cn:"研究"},
+        {en:"achievement",ph:"/əˈtʃiːvmənt/",pos:"n.",cn:"成就；成绩"},
+        {en:"award",ph:"/əˈwɔːd/",pos:"n.",cn:"奖；奖品"},
+        {en:"contribution",ph:"/ˌkɒntrɪˈbjuːʃn/",pos:"n.",cn:"贡献"},
+        {en:"publish",ph:"/ˈpʌblɪʃ/",pos:"v.",cn:"出版；发表"},
+        {en:"inspire",ph:"/ɪnˈspaɪə(r)/",pos:"v.",cn:"启发；激励"},
+        {en:"curious",ph:"/ˈkjʊəriəs/",pos:"adj.",cn:"好奇的"},
+        {en:"determination",ph:"/dɪˌtɜːmɪˈneɪʃn/",pos:"n.",cn:"决心；果断"},
+        {en:"passion",ph:"/ˈpæʃn/",pos:"n.",cn:"热情；激情"},
+        {en:"be famous for",ph:"",pos:"短语",cn:"因……而闻名"},
+        {en:"make a contribution to",ph:"",pos:"短语",cn:"对……做出贡献"}
+      ]},
+      { id:"9A-U3", title:"Unit 3 Family life", words:[
+        {en:"decision",ph:"/dɪˈsɪʒn/",pos:"n.",cn:"决定；抉择"},
+        {en:"responsibility",ph:"/rɪˌspɒnsəˈbɪləti/",pos:"n.",cn:"责任"},
+        {en:"argue",ph:"/ˈɑːɡjuː/",pos:"v.",cn:"争论；争吵"},
+        {en:"relationship",ph:"/rɪˈleɪʃnʃɪp/",pos:"n.",cn:"关系"},
+        {en:"generation",ph:"/ˌdʒenəˈreɪʃn/",pos:"n.",cn:"一代人"},
+        {en:"allow",ph:"/əˈlaʊ/",pos:"v.",cn:"允许；准许"},
+        {en:"communicate",ph:"/kəˈmjuːnɪkeɪt/",pos:"v.",cn:"交流；沟通"},
+        {en:"independent",ph:"/ˌɪndɪˈpendənt/",pos:"adj.",cn:"独立的"},
+        {en:"private",ph:"/ˈpraɪvət/",pos:"adj.",cn:"私人的；个人的"},
+        {en:"patient",ph:"/ˈpeɪʃnt/",pos:"adj.",cn:"有耐心的"},
+        {en:"generation gap",ph:"",pos:"短语",cn:"代沟"},
+        {en:"get along with",ph:"",pos:"短语",cn:"与……相处"}
+      ]},
+      { id:"9A-U4", title:"Unit 4 Problems and advice", words:[
+        {en:"advice",ph:"/ədˈvaɪs/",pos:"n.",cn:"建议；忠告"},
+        {en:"suggestion",ph:"/səˈdʒestʃən/",pos:"n.",cn:"建议；提议"},
+        {en:"complain",ph:"/kəmˈpleɪn/",pos:"v.",cn:"抱怨；投诉"},
+        {en:"solution",ph:"/səˈluːʃn/",pos:"n.",cn:"解决办法"},
+        {en:"embarrassed",ph:"/ɪmˈbærəst/",pos:"adj.",cn:"尴尬的"},
+        {en:"regret",ph:"/rɪˈɡret/",pos:"v.",cn:"后悔；遗憾"},
+        {en:"apologize",ph:"/əˈpɒlədʒaɪz/",pos:"v.",cn:"道歉"},
+        {en:"forgive",ph:"/fəˈɡɪv/",pos:"v.",cn:"原谅；宽恕"},
+        {en:"confidence",ph:"/ˈkɒnfɪdəns/",pos:"n.",cn:"信心；自信"},
+        {en:"stress",ph:"/stres/",pos:"n.",cn:"压力；紧张"},
+        {en:"overcome",ph:"/ˌəʊvəˈkʌm/",pos:"v.",cn:"克服；战胜"},
+        {en:"deal with",ph:"",pos:"短语",cn:"处理；对付"},
+        {en:"cheer up",ph:"",pos:"短语",cn:"振作起来"}
+      ]},
+      { id:"9A-U5", title:"Unit 5 Action!", words:[
+        {en:"action",ph:"/ˈækʃn/",pos:"n.",cn:"行动；行为"},
+        {en:"rescue",ph:"/ˈreskjuː/",pos:"v.",cn:"营救；拯救"},
+        {en:"emergency",ph:"/ɪˈmɜːdʒənsi/",pos:"n.",cn:"紧急情况"},
+        {en:"brave",ph:"/breɪv/",pos:"adj.",cn:"勇敢的"},
+        {en:"dangerous",ph:"/ˈdeɪndʒərəs/",pos:"adj.",cn:"危险的"},
+        {en:"escape",ph:"/ɪˈskeɪp/",pos:"v.",cn:"逃跑；逃脱"},
+        {en:"injury",ph:"/ˈɪndʒəri/",pos:"n.",cn:"伤害；损伤"},
+        {en:"earthquake",ph:"/ˈɜːθkweɪk/",pos:"n.",cn:"地震"},
+        {en:"victim",ph:"/ˈvɪktɪm/",pos:"n.",cn:"受害者；遇难者"},
+        {en:"calm",ph:"/kɑːm/",pos:"adj.",cn:"冷静的；沉着的"},
+        {en:"panic",ph:"/ˈpænɪk/",pos:"n.",cn:"恐慌；惊慌"},
+        {en:"take action",ph:"",pos:"短语",cn:"采取行动"},
+        {en:"calm down",ph:"",pos:"短语",cn:"冷静下来"},
+        {en:"first aid",ph:"",pos:"短语",cn:"急救"}
+      ]},
+      { id:"9A-U6", title:"Unit 6 Healthy diet", words:[
+        {en:"diet",ph:"/ˈdaɪət/",pos:"n.",cn:"日常饮食"},
+        {en:"nutrition",ph:"/njuˈtrɪʃn/",pos:"n.",cn:"营养"},
+        {en:"vitamin",ph:"/ˈvɪtəmɪn/",pos:"n.",cn:"维生素"},
+        {en:"protein",ph:"/ˈprəʊtiːn/",pos:"n.",cn:"蛋白质"},
+        {en:"mineral",ph:"/ˈmɪnərəl/",pos:"n.",cn:"矿物质"},
+        {en:"fat",ph:"/fæt/",pos:"n.",cn:"脂肪"},
+        {en:"sugar",ph:"/ˈʃʊɡə(r)/",pos:"n.",cn:"糖"},
+        {en:"calorie",ph:"/ˈkæləri/",pos:"n.",cn:"卡路里"},
+        {en:"balance",ph:"/ˈbæləns/",pos:"n.",cn:"平衡"},
+        {en:"habit",ph:"/ˈhæbɪt/",pos:"n.",cn:"习惯"},
+        {en:"junk food",ph:"",pos:"短语",cn:"垃圾食品"},
+        {en:"balanced diet",ph:"",pos:"短语",cn:"均衡饮食"},
+        {en:"put on weight",ph:"",pos:"短语",cn:"长胖"},
+        {en:"lose weight",ph:"",pos:"短语",cn:"减肥"}
+      ]},
+      { id:"9A-U7", title:"Unit 7 The Adventures of Tom Sawyer", words:[
+        {en:"adventure",ph:"/ədˈventʃə(r)/",pos:"n.",cn:"冒险；奇遇"},
+        {en:"novel",ph:"/ˈnɒvl/",pos:"n.",cn:"小说"},
+        {en:"character",ph:"/ˈkærəktə(r)/",pos:"n.",cn:"人物；角色"},
+        {en:"fence",ph:"/fens/",pos:"n.",cn:"栅栏；篱笆"},
+        {en:"paint",ph:"/peɪnt/",pos:"v.",cn:"油漆；涂色"},
+        {en:"trick",ph:"/trɪk/",pos:"n.",cn:"计谋；把戏"},
+        {en:"naughty",ph:"/ˈnɔːti/",pos:"adj.",cn:"淘气的；调皮的"},
+        {en:"punish",ph:"/ˈpʌnɪʃ/",pos:"v.",cn:"惩罚"},
+        {en:"cave",ph:"/keɪv/",pos:"n.",cn:"洞穴"},
+        {en:"treasure",ph:"/ˈtreʒə(r)/",pos:"n.",cn:"宝藏；财宝"},
+        {en:"island",ph:"/ˈaɪlənd/",pos:"n.",cn:"岛；岛屿"},
+        {en:"make fun of",ph:"",pos:"短语",cn:"取笑；嘲笑"},
+        {en:"come up with",ph:"",pos:"短语",cn:"想出；提出"},
+        {en:"run away",ph:"",pos:"短语",cn:"逃跑"}
+      ]},
+      { id:"9A-U8", title:"Unit 8 Surprise endings", words:[
+        {en:"ending",ph:"/ˈendɪŋ/",pos:"n.",cn:"结局；结尾"},
+        {en:"surprise",ph:"/səˈpraɪz/",pos:"n.",cn:"惊奇；意外"},
+        {en:"plot",ph:"/plɒt/",pos:"n.",cn:"情节"},
+        {en:"twist",ph:"/twɪst/",pos:"n.",cn:"转折；转折点"},
+        {en:"suspense",ph:"/səˈspens/",pos:"n.",cn:"悬念"},
+        {en:"clue",ph:"/kluː/",pos:"n.",cn:"线索；提示"},
+        {en:"mystery",ph:"/ˈmɪstri/",pos:"n.",cn:"神秘；谜"},
+        {en:"detective",ph:"/dɪˈtektɪv/",pos:"n.",cn:"侦探"},
+        {en:"suspect",ph:"/ˈsʌspekt/",pos:"n.",cn:"嫌疑人"},
+        {en:"crime",ph:"/kraɪm/",pos:"n.",cn:"犯罪；罪行"},
+        {en:"evidence",ph:"/ˈevɪdəns/",pos:"n.",cn:"证据"},
+        {en:"witness",ph:"/ˈwɪtnəs/",pos:"n.",cn:"目击者；证人"},
+        {en:"innocent",ph:"/ˈɪnəsnt/",pos:"adj.",cn:"无辜的；清白的"},
+        {en:"guilty",ph:"/ˈɡɪlti/",pos:"adj.",cn:"有罪的；内疚的"},
+        {en:"sacrifice",ph:"/ˈsækrɪfaɪs/",pos:"v.",cn:"牺牲；献出"},
+        {en:"valuable",ph:"/ˈvæljuəbl/",pos:"adj.",cn:"贵重的；有价值的"},
+        {en:"be shocked at",ph:"",pos:"短语",cn:"对……感到震惊"},
+        {en:"turn out",ph:"",pos:"短语",cn:"结果是"}
+      ]}
+    ]
+  },
+  "9B": {
+    name: "九年级下册",
+    units: [
+      { id:"9B-U1", title:"Unit 1 Great explorations", words:[
+        {en:"exploration",ph:"/ˌekspləˈreɪʃn/",pos:"n.",cn:"探险；探索"},
+        {en:"voyage",ph:"/ˈvɔɪɪdʒ/",pos:"n.",cn:"航行；航海"},
+        {en:"navigator",ph:"/ˈnævɪɡeɪtə(r)/",pos:"n.",cn:"航海家；领航员"},
+        {en:"compass",ph:"/ˈkʌmpəs/",pos:"n.",cn:"指南针；罗盘"},
+        {en:"route",ph:"/ruːt/",pos:"n.",cn:"路线；航线"},
+        {en:"continent",ph:"/ˈkɒntɪnənt/",pos:"n.",cn:"大陆；洲"},
+        {en:"trade",ph:"/treɪd/",pos:"n.",cn:"贸易；商业"},
+        {en:"silk",ph:"/sɪlk/",pos:"n.",cn:"丝绸"},
+        {en:"spice",ph:"/spaɪs/",pos:"n.",cn:"香料"},
+        {en:"overcome",ph:"/ˌəʊvəˈkʌm/",pos:"v.",cn:"克服；战胜"},
+        {en:"hardship",ph:"/ˈhɑːdʃɪp/",pos:"n.",cn:"困难；艰难"},
+        {en:"set sail",ph:"",pos:"短语",cn:"起航"},
+        {en:"open up",ph:"",pos:"短语",cn:"开辟"},
+        {en:"be known as",ph:"",pos:"短语",cn:"被称为"}
+      ]},
+      { id:"9B-U2", title:"Unit 2 Culture shock", words:[
+        {en:"culture",ph:"/ˈkʌltʃə(r)/",pos:"n.",cn:"文化"},
+        {en:"shock",ph:"/ʃɒk/",pos:"n.",cn:"震惊；冲击"},
+        {en:"custom",ph:"/ˈkʌstəm/",pos:"n.",cn:"风俗；习俗"},
+        {en:"tradition",ph:"/trəˈdɪʃn/",pos:"n.",cn:"传统"},
+        {en:"adapt",ph:"/əˈdæpt/",pos:"v.",cn:"适应；改编"},
+        {en:"familiar",ph:"/fəˈmɪliə(r)/",pos:"adj.",cn:"熟悉的"},
+        {en:"homesick",ph:"/ˈhəʊmsɪk/",pos:"adj.",cn:"想家的"},
+        {en:"appreciate",ph:"/əˈpriːʃieɪt/",pos:"v.",cn:"欣赏；感激"},
+        {en:"diversity",ph:"/daɪˈvɜːsəti/",pos:"n.",cn:"多样性；差异"},
+        {en:"culture shock",ph:"",pos:"短语",cn:"文化冲击"},
+        {en:"get used to",ph:"",pos:"短语",cn:"习惯于"},
+        {en:"feel at home",ph:"",pos:"短语",cn:"感到自在"}
+      ]},
+      { id:"9B-U3", title:"Unit 3 The environment", words:[
+        {en:"environment",ph:"/ɪnˈvaɪrənmənt/",pos:"n.",cn:"环境"},
+        {en:"pollution",ph:"/pəˈluːʃn/",pos:"n.",cn:"污染"},
+        {en:"carbon",ph:"/ˈkɑːbən/",pos:"n.",cn:"碳"},
+        {en:"emission",ph:"/ɪˈmɪʃn/",pos:"n.",cn:"排放；排放物"},
+        {en:"climate",ph:"/ˈklaɪmət/",pos:"n.",cn:"气候"},
+        {en:"global",ph:"/ˈɡləʊbl/",pos:"adj.",cn:"全球的"},
+        {en:"recycle",ph:"/ˌriːˈsaɪkl/",pos:"v.",cn:"回收利用"},
+        {en:"reduce",ph:"/rɪˈdjuːs/",pos:"v.",cn:"减少；降低"},
+        {en:"renewable",ph:"/rɪˈnjuːəbl/",pos:"adj.",cn:"可再生的"},
+        {en:"sustainable",ph:"/səˈsteɪnəbl/",pos:"adj.",cn:"可持续的"},
+        {en:"consequence",ph:"/ˈkɒnsɪkwəns/",pos:"n.",cn:"后果；结果"},
+        {en:"carbon footprint",ph:"",pos:"短语",cn:"碳足迹"},
+        {en:"global warming",ph:"",pos:"短语",cn:"全球变暖"}
+      ]},
+      { id:"9B-U4", title:"Unit 4 Natural disasters", words:[
+        {en:"disaster",ph:"/dɪˈzɑːstə(r)/",pos:"n.",cn:"灾难；灾害"},
+        {en:"earthquake",ph:"/ˈɜːθkweɪk/",pos:"n.",cn:"地震"},
+        {en:"flood",ph:"/flʌd/",pos:"n.",cn:"洪水；水灾"},
+        {en:"tsunami",ph:"/tsuːˈnɑːmi/",pos:"n.",cn:"海啸"},
+        {en:"volcano",ph:"/vɒlˈkeɪnəʊ/",pos:"n.",cn:"火山"},
+        {en:"typhoon",ph:"/taɪˈfuːn/",pos:"n.",cn:"台风"},
+        {en:"drought",ph:"/draʊt/",pos:"n.",cn:"干旱"},
+        {en:"destroy",ph:"/dɪˈstrɔɪ/",pos:"v.",cn:"破坏；毁灭"},
+        {en:"damage",ph:"/ˈdæmɪdʒ/",pos:"v.",cn:"损害；损坏"},
+        {en:"survive",ph:"/səˈvaɪv/",pos:"v.",cn:"幸存；存活"},
+        {en:"shelter",ph:"/ˈʃeltə(r)/",pos:"n.",cn:"避难所；庇护"},
+        {en:"evacuate",ph:"/ɪˈvækjueɪt/",pos:"v.",cn:"疏散；撤离"},
+        {en:"be prepared for",ph:"",pos:"短语",cn:"为……做准备"}
+      ]},
+      { id:"9B-U5", title:"Unit 5 Sport", words:[
+        {en:"athlete",ph:"/ˈæθliːt/",pos:"n.",cn:"运动员"},
+        {en:"compete",ph:"/kəmˈpiːt/",pos:"v.",cn:"竞争；比赛"},
+        {en:"championship",ph:"/ˈtʃæmpiənʃɪp/",pos:"n.",cn:"锦标赛；冠军"},
+        {en:"victory",ph:"/ˈvɪktəri/",pos:"n.",cn:"胜利"},
+        {en:"medal",ph:"/ˈmedl/",pos:"n.",cn:"奖牌"},
+        {en:"champion",ph:"/ˈtʃæmpiən/",pos:"n.",cn:"冠军"},
+        {en:"coach",ph:"/kəʊtʃ/",pos:"n.",cn:"教练"},
+        {en:"fitness",ph:"/ˈfɪtnəs/",pos:"n.",cn:"健康；适合"},
+        {en:"strength",ph:"/streŋθ/",pos:"n.",cn:"力量；体力"},
+        {en:"endurance",ph:"/ɪnˈdjʊərəns/",pos:"n.",cn:"耐力"},
+        {en:"teamwork",ph:"/ˈtiːmwɜːk/",pos:"n.",cn:"团队合作"},
+        {en:"take part in",ph:"",pos:"短语",cn:"参加"},
+        {en:"break a record",ph:"",pos:"短语",cn:"打破记录"}
+      ]},
+      { id:"9B-U6", title:"Unit 6 Caring for your health", words:[
+        {en:"mental",ph:"/ˈmentl/",pos:"adj.",cn:"精神的；心理的"},
+        {en:"physical",ph:"/ˈfɪzɪkl/",pos:"adj.",cn:"身体的；物理的"},
+        {en:"stress",ph:"/stres/",pos:"n.",cn:"压力；紧张"},
+        {en:"anxiety",ph:"/æŋˈzaɪəti/",pos:"n.",cn:"焦虑；不安"},
+        {en:"depression",ph:"/dɪˈpreʃn/",pos:"n.",cn:"抑郁；沮丧"},
+        {en:"relax",ph:"/rɪˈlæks/",pos:"v.",cn:"放松；休息"},
+        {en:"lifestyle",ph:"/ˈlaɪfstaɪl/",pos:"n.",cn:"生活方式"},
+        {en:"habit",ph:"/ˈhæbɪt/",pos:"n.",cn:"习惯"},
+        {en:"prevent",ph:"/prɪˈvent/",pos:"v.",cn:"预防；阻止"},
+        {en:"recover",ph:"/rɪˈkʌvə(r)/",pos:"v.",cn:"恢复；康复"},
+        {en:"symptom",ph:"/ˈsɪmptəm/",pos:"n.",cn:"症状"},
+        {en:"positive",ph:"/ˈpɒzətɪv/",pos:"adj.",cn:"积极的；正面的"},
+        {en:"care for",ph:"",pos:"短语",cn:"关心；照顾"},
+        {en:"keep fit",ph:"",pos:"短语",cn:"保持健康"}
+      ]}
+    ]
   }
 };
 
@@ -1317,6 +1912,117 @@ const TEXTS = {
         { title:"Extending — Jane Goodall", text:"Jane Goodall is a world-famous scientist. This is the story of how she started her career. Jane was not very interested in animals when she was a child. Then, one day, her father gave her a toy chimpanzee. She liked it very much. From that day on, she became really interested in animals. When she was a 16-year-old schoolgirl, Jane dreamt of a career studying wild animals in Africa. Jane's mother said, \"If you really want something, work hard and never give up. Then you'll find a way.\" Jane's mother was right. When she was 26, Jane travelled from Britain to the mountains of East Africa. She studied chimpanzees there for years. She watched the animals for a long time and they became her friends. Jane discovered that these animals greet one another with a kiss or a hug, and make and use tools — just like humans do. Some people questioned the methods Jane used in her research. Jane gave the chimpanzees human names and compared them to humans. People at the time thought she should not treat the chimpanzees too much like people. However, Jane did not give up. In the end, her discoveries changed how we think about humans and animals. Nowadays, scientists believe that human beings have a lot in common with chimpanzees. Jane Goodall is now well known all over the world. She often gives lectures about her work because she wants people to protect the environment. Her life story has inspired many young people the world over. Jane Goodall made her dreams come true because she never gave up." }
       ]}
     ]
+  },
+  "8A": {
+    name: "八年级上册",
+    units: [
+      { id:"8A-U1", title:"Unit 1 Look it up!", readings:[
+        { title:"Reading — Leonardo da Vinci", text:"Leonardo da Vinci (1452-1519) was an Italian painter, inventor, musician, engineer and scientist. Da Vinci was extremely intelligent, and he was unusually talented in many different fields. He was a true genius, and his paintings and inventions changed the way we think about art and science. Leonardo da Vinci was born in the countryside in Italy. From an early age, he showed great intelligence and artistic talent. As he grew older, he learnt to do many different things. His paintings are very famous, and one, the Mona Lisa, is perhaps the most famous painting in the world. He also had many inventions. For example, his notebooks include some interesting drawings of flying machines and other vehicles." },
+        { title:"Reading — Dinosaurs", text:"Dinosaurs are a type of prehistoric animal. They are related to crocodiles, snakes and lizards. They are also the ancestors of today's birds. Dinosaurs lived on land and walked on either two or four legs. They came in different sizes. Some were as small as chickens, while others were as big as ten elephants. Dinosaurs first appeared about 245 million years ago. They lived on Earth for a long time. However, about 66 million years ago, dinosaurs suddenly died out. Scientists are not completely sure why. Some think a huge rock from space hit the Earth. Others think the weather changed too much. However, scientists are learning more about dinosaurs by studying their fossils." }
+      ]},
+      { id:"8A-U2", title:"Unit 2 Amazing numbers", readings:[
+        { title:"Reading — Counting in history", text:"It seems very natural that if you have two dollars and add two dollars to them, you have four dollars. But do you know it took men millions of years to be able to think this way? In fact, one of the most difficult things to teach children is the idea of numbers. In ancient times when a man wanted to tell how many animals he owned, he had no system of numbers to use. He put a stone into a bag for each animal. The more animals, the more stones he had. It may explain why the word 'calculate' comes from the Latin word 'calculus'. 'Calculus' means 'stone'. Then, man used lines to count. People would just draw a line for each thing they wanted to count, but they had no word to tell the number. Later on, people used fingers. Again, we have the word that goes back to this. The word 'digit' comes from the Latin word 'digitus'. It means 'finger'! And the fact that we have 10 fingers led to the use of 10 in the system of numbers. The number system we use today was invented by the Hindus in India thousands of years ago and was brought to Europe during the 8th to 11th century by Arab traders. In this system, people count things with ten numbers: 1, 2, 3, 4, 5, 6, 7, 8, 9 and 0. It is called the decimal system because it is built on the base of 10." }
+      ]},
+      { id:"8A-U3", title:"Unit 3 Our digital lives", readings:[
+        { title:"Reading — Smart life in the future", text:"Host: Our guest today is Dr Li, a technology expert. Dr Li has studied how the internet will further change our lives in the future. Dr Li: That's right. The internet has brought big changes to everyday life. For example, e-learning and mobile payment have changed the way we study and shop. In the future, even more things will be connected to the internet, so life will continue to change. Host: Can you give us some examples? Dr Li: Take health for example. We'll probably wear small devices all the time, and they'll check our health and warn us about health problems. With this information, doctors can provide better treatment. Host: Interesting! Will the internet help improve the environment? Dr Li: Yes! As more things become connected to the internet, our cities will become smart cities. Smart cities will be more eco-friendly than cities today. One of the most important changes will come in energy use. Different devices will communicate and share data with each other. This will help them save energy. For example, smart rubbish bins will automatically tell the smart city network when they are full. This data will allow the rubbish collection company to plan better collection routes. Host: Will smart cities improve our lives in other ways? Dr Li: I think the biggest change will be in transport. Our roads will be much safer in the future, and traffic will flow more smoothly. There will be fewer accidents because cars will drive themselves, and they will share data with the smart city network. With this data, traffic lights can change the timing according to the number of cars on the road. Host: That's amazing. And will this really be possible? Dr Li: Yes, it will. We've already started doing some of these things!" }
+      ]},
+      { id:"8A-U4", title:"Unit 4 Inventions", readings:[
+        { title:"Reading — The wonder of the wheel", text:"When the first humans decided to leave their homes over 100,000 years ago in search of new places to live and better sources of food, they did it on foot. Humans continued walking across the globe for the next 94,000 years, until about 6,000 years ago when a number of important changes took place. For instance, in the Central Asian country of Kazakhstan, people started to ride horses. Although this meant that people could travel further and faster, transporting large amounts of goods was still a difficult job. That all changed, however, a few hundred years later with the invention of the wheel. Who first invented the wheel? We will never know for sure, but the inventors probably first used wheels to make pottery. Later, they realized that they could also use them to transport people and things. They soon attached wheels to horse-pulled vehicles. Farmers were suddenly able to transport their goods to markets far away. This invention increased national and international trade. The wheel changed the way villages, towns and even countries did business with each other, but it wasn't perfect. The roads were old walking paths. These old paths quickly became extremely difficult to use in wet weather. As a result, the first roads made of stone appeared after the arrival of the wheel. The Romans then invented new road-building techniques. The new roads were very good, and we still use some of them today. The wheel not only changed the way humans moved, but it also allowed us to build all types of amazing machines. Windmills, clocks and other machines all use wheels, and the Industrial Revolution depended on the wheel. Even in our digitalized world, we still use wheels in devices such as 3D printers. Without doubt, the wheel is one of the most important inventions of all time." }
+      ]},
+      { id:"8A-U5", title:"Unit 5 Going on an exchange trip", readings:[
+        { title:"Reading — An exchange experience", text:"Last year, I went on an exchange trip to the UK. I stayed with a host family in London for two weeks. It was one of the best experiences of my life. At first, I was very nervous. My English was not perfect, and I was worried about making mistakes. But my host family was very kind and patient. They spoke slowly and helped me understand. On the first day, my host sister Emma showed me around her school. It was very different from my school in China. Students wore their own clothes instead of school uniforms. They called their teachers by their first names! I was surprised, but Emma said it was normal there. During the two weeks, I attended classes with Emma. I found that British students do a lot of group work and discussions. They also have many after-school clubs, like drama, music and sports. I joined the cooking club and learned to make traditional English scones. At the weekend, my host family took me to visit some famous places. We went to the British Museum, the Tower of London and Buckingham Palace. I also tried fish and chips, a famous British dish. It was delicious! This exchange trip helped me improve my English a lot. More importantly, I learned about a different culture and made friends from another country. I hope more students will have the chance to go on exchange trips." }
+      ]},
+      { id:"8A-U6", title:"Unit 6 Wisdom counts", readings:[
+        { title:"Reading — The night of the horse", text:"The soldier came down the stairs \u2014 two at a time. 'Captain, they've gone,' he cried. 'The Greek soldiers have disappeared \u2014 all of them. I can't see...' But the captain was no longer listening. He was going up the stairs \u2014 three at a time. Seconds later, the captain stood on the high wall of the city of Troy. He looked down at the empty Greek camp and, beyond it, at the empty sea. 'They've gone and we've won,' he said. 'The Greek army has tried for ten years to capture our city. Now, they've sailed away and taken everything with them.' 'Not everything, sir,' the soldier said. 'They've left their horse.' Outside the main gate of the city stood a huge wooden horse. 'Ah, yes,' the captain said, 'that wooden horse. It's so big that they couldn't take it with them. Well, it's ours now. Get some help and pull it into the city. That won't be difficult. It's on wheels.' 'But why is it on wheels?' asked the soldier. 'I think that maybe the Greeks want us to...' The captain stopped him and said, 'You're a soldier. It's not your job to think. Your job is to obey orders, and I'm giving you one now. Move that horse!' So the Trojans pulled the wooden horse into the city. That night, all the Trojans celebrated their victory in the main square. They sang and danced around the horse, and made jokes about the stupid Greeks. Then they made sure all the gates of the city were locked, and went to bed. By midnight, the main square was empty, except for the huge horse. Some Greek soldiers were hiding inside. They waited for another hour, to be sure. Then, very carefully, they opened the secret door on the horse's side and climbed out. No guards were around so they quietly made their way to the main gate and let in the Greek soldiers waiting outside. These soldiers secretly came back while the Trojans were celebrating. Now the Greek army entered the city. The Greeks spent ten years trying to take over the city of Troy. In the end, they succeeded in capturing it in just one night with a clever trick \u2014 and without any fighting." }
+      ]},
+      { id:"8A-U7", title:"Unit 7 The secret of memory", readings:[
+        { title:"Reading — How to improve your memory", text:"Your memory plays an important role in your life. It helps you learn, work and communicate with others. However, everyone has moments of forgetfulness, and memory tends to decline with age. It's quite normal for people to experience memory loss as they get older. But there are many things you can do to improve your memory. First, make a point of trying new things. When you learn something new, your brain creates new connections. This helps keep your mind active and sharp. It's helpful to live a mentally active life. Read books, learn a new language, or play chess. Second, use memory linking. This means connecting new information to things you already know. For example, if you want to remember a new word, try to link it to a picture or a story. You can also make up a story to help you remember a list of things. What's more, repetition is very important. When you repeat something, you make the memory stronger. Review your notes regularly, and you will remember them better. Third, take care of your health. Your brain needs good food and rest to work well. Eat a healthy diet with plenty of fruit, vegetables and nuts. Get enough sleep every night. Exercise is also good for your brain because it helps blood flow. Last but not least, take time to relax. When you are stressed, it is harder to remember things. So make time to do things you enjoy, like listening to music or going for a walk. If you follow these tips, your memory will improve!" }
+      ]},
+      { id:"8A-U8", title:"Unit 8 Pets and us", readings:[
+        { title:"Reading — Man's best friend", text:"Dogs are often called 'man's best friend', and there are good reasons for this. For thousands of years, dogs have lived with humans and helped us in many ways. Some dogs help farmers look after sheep. Others help police officers catch criminals. Guide dogs help blind people move around safely. And search and rescue dogs help find people who are lost. But dogs are not just workers \u2014 they are also wonderful companions. Studies show that spending time with a pet dog can make people feel happier and less lonely. Dogs seem to understand when their owners are sad, and they often try to comfort them. Walking a dog also helps people get regular exercise. However, keeping a dog is a big responsibility. Dogs need food, water, exercise and regular visits to the vet. They also need love and attention. Before getting a dog, you should think carefully about whether you have enough time and money to look after one. Cats are another popular pet. They are more independent than dogs and can be left alone for longer periods. Many people love cats because they are quiet, clean and playful. Whatever pet you choose, remember that it depends on you for everything. Treat your pet with kindness and respect, and it will give you love and joy in return." }
+      ]}
+    ]
+  },
+  "8B": {
+    name: "八年级下册",
+    units: [
+      { id:"8B-U1", title:"Unit 1 Helping those in need", readings:[
+        { title:"Reading — Voluntary work", text:"Three teenagers offered to do some voluntary work during the school holidays. They wrote the following reports. Betty: I did some voluntary work in a children's hospital. The children there all suffer from serious illness. We organized a painting competition for them. I met a girl called Cindy. She wanted to paint a picture of the park near her home. I went there and took some photos of it. Cindy used them for her painting. Mark: There are many children without parents. I met some of these children with my mother. We taught them to tell stories. This helps them express their feelings. One child said, 'My friends don't understand my pain.' We spent some time with a girl called Vivien. Her parents died in a car accident, and she is unhappy and very lonely. She needs friendship. My mother and I will continue to visit Vivien. Annie: I wanted to help disabled children. They have difficulty walking or moving. I taught them to sing because music can bring them joy and peace of mind. I met a boy called Tim. He hurt his legs in an accident, but he has lots of courage. We need to help children like Tim and raise their spirits. I will continue to do voluntary work in the future." }
+      ]},
+      { id:"8B-U2", title:"Unit 2 Body language", readings:[
+        { title:"Reading — Body language matters!", text:"Li Lele and Wang Haoran are university students. They both have part-time jobs at a travel company. A well-dressed lady entered the office. She looked at Li Lele and Wang Haoran, and then walked over to Lele. Lele looked excited. 'Good morning, madam!' she said cheerfully. Haoran sighed and walked away. 'What's the matter?' asked Mr Yang, the boss. 'People always choose Lele instead of me. I don't understand.' 'I do. It's the way you communicate.' 'How can that be?' Haoran asked. 'I don't get a chance to speak.' 'Communicating means more than just speaking. Your body language is important too.' 'Body language?' 'It's the way you stand and sit. It's your gestures and the expressions on your face. Your whole appearance communicates things. You don't give people a good impression, Haoran. You look down, you never smile, and you don't turn your head towards them. Look at Lele. She's holding her head up. She always smiles and looks friendly. Her body language is making people feel welcome, so they go to her for help.' Haoran observed Lele carefully for a while and then decided to improve his own body language. He sat up straight and tried smiling at people. Minutes later, a beautiful girl entered. She walked over to Haoran. A few moments later she left with a smile. Mr Yang came over at once and said, 'You made a good impression on her, Haoran.' 'That was my sister,' said Haoran. 'She wanted to remind me that tomorrow is her birthday.'" }
+      ]},
+      { id:"8B-U3", title:"Unit 3 Comics and animation", readings:[
+        { title:"Reading — The world of comics", text:"Comics have been popular around the world for many years. They tell stories using pictures and words together. Some comics are funny, while others tell exciting adventures or deep stories. Many famous movies and TV shows are based on comics. For example, Spider-Man and Batman started as comic book characters before they became movie stars. In Japan, comics are called manga. Manga is very popular and covers many topics, from sports and school life to science fiction and fantasy. One of the most famous manga artists is Osamu Tezuka, who is often called the 'God of Manga'. He created Astro Boy, one of the most famous manga characters in history. In China, comics have a long history too. Traditional Chinese picture books told stories with beautiful illustrations. Today, Chinese comics, also known as manhua, are becoming more and more popular around the world. Animation brings comics to life. When comic characters start moving and speaking on screen, they become even more exciting. Many popular animated films are based on comics. Making an animation takes a lot of time and hard work. Artists have to draw thousands of pictures to create just a few minutes of animation. Whether you like reading comics or watching animations, they are both great ways to enjoy stories and use your imagination." }
+      ]},
+      { id:"8B-U4", title:"Unit 4 Arts and heritage", readings:[
+        { title:"Reading — Dwelling in the Fuchun Mountains", text:"Have you heard about a world-famous landscape painting named Dwelling in the Fuchun Mountains? It was painted by Huang Gongwang, one of the Four Masters of the Yuan dynasty. Many experts think it is among the greatest masterpieces in Chinese art history. The story behind this painting is also very unusual. Dwelling in the Fuchun Mountains shows the beauty of the countryside of Jiangnan. The painting takes us on a breathtaking journey in the mountains. Along the way, we follow narrow paths, cross wooden bridges and pass by rivers. If we look carefully, we can see people far away in the landscape. Some woodsmen are hidden among the trees. On the river, there is a fisherman. It looks like he is at one with nature, and we feel the same when we look at the painting. However, the painting had a hard journey itself. In the 17th century, the painting was almost destroyed in a fire. It was broken into two pieces. One piece was kept in the mainland of China, and the other was taken to China's Taiwan. For many years, the two pieces were separated. In 2011, the two pieces were brought together again for a special exhibition. It was a historic moment for Chinese art. Digital technology has also helped protect this great painting. Experts used high-tech methods to make digital copies of the painting. This means that even if something happens to the original, we will still have a perfect record of it. Great art belongs to all people. By protecting our cultural heritage, we make sure that future generations can enjoy these wonderful works too." }
+      ]},
+      { id:"8B-U5", title:"Unit 5 Saving animals in danger", readings:[
+        { title:"Reading — One family, two worlds: an elephant's story", text:"I'm now very old and near the end of my life. But I can still remember many, many years ago, I lived with my mother, aunts and cousins in a wild and beautiful land. We enjoyed our time under the deep blue sky. We had more than enough to eat. We never worried about anything until one day, when I was about three. On that day, a group of two-legged strangers appeared in front of us \u2014 I found out later that they were humans. Without warning they raised their guns and shot dead my mother and several of my relatives. As I was about to be shot, one of them said, 'Keep that little one. He's handsome and seems smart. We can make greater use of him.' I was then trained and forced to do all kinds of stupid tricks to make humans laugh. Now, years and years later, things are changing for the better. Our population is starting to grow again. My great-great-grandsons and granddaughters are able to move freely across the land. They search for food, water and places to rest. The little ones sometimes damage crops and people's homes. But they are not chased or harmed. There are no angry humans going after them. Instead, people leave them bags of corn and fruit on the roadside. The food leads them in the right direction back to their homeland. Drones follow their progress and volunteers protect them from harm. The little ones do not have to worry about anything. They move around without a care in the world. They eat when they are hungry and sleep when tired. They swim in the river and play when they feel like it. No one forces them to move away from their land. What a different world this is! In the old world, we were killed for our tusks. In this new world, humans respect and value all animal species." }
+      ]},
+      { id:"8B-U6", title:"Unit 6 Learning by doing", readings:[
+        { title:"Reading — Learning through projects", text:"More and more schools are using project-based learning to help students develop important skills. In project-based learning, students work on real-world problems and create something useful. This way of learning is very different from just reading textbooks and listening to lectures. At Sunshine Middle School, students recently did a project about recycling. They worked in groups to design a recycling programme for their school. First, they researched how much rubbish the school produced every week. They were surprised to find that most of the rubbish was paper and plastic bottles. Then, each group came up with a plan. One group designed special recycling bins with clear labels. Another group created a poster campaign to encourage students to recycle. A third group wrote a play about protecting the environment and performed it for the whole school. The students learned many things through this project. They learned how to do research, how to work in a team, and how to communicate their ideas. They also learned about the environment and why recycling is important. 'I never thought learning could be so much fun,' said Li Wei, a student in Class 2. 'When you do a project, you really understand the topic because you experience it yourself.' The school plans to continue using project-based learning. The next project will be about healthy eating. Students will design a healthy menu for the school canteen. Learning by doing helps students develop skills that will be useful for the rest of their lives." }
+      ]},
+      { id:"8B-U7", title:"Unit 7 Space exploration", readings:[
+        { title:"Reading — Exploring the universe", text:"For thousands of years, humans have looked up at the stars and wondered about the universe. Today, thanks to modern technology, we can explore space in ways that were once impossible. The history of space exploration began in 1957, when the Soviet Union launched Sputnik 1, the first artificial satellite. Four years later, in 1961, Yuri Gagarin became the first human to travel into space. Then, in 1969, American astronaut Neil Armstrong became the first person to walk on the Moon. China has also made great progress in space exploration. In 2003, Yang Liwei became China's first astronaut in space aboard Shenzhou 5. Since then, China has launched many space missions. The Chang'e programme has sent probes to the Moon, and the Tianwen-1 mission successfully landed on Mars in 2021. The Tiangong space station, built by China, now orbits the Earth and conducts important scientific experiments. Why do we explore space? There are many reasons. Space exploration helps us learn about the universe and our place in it. It also leads to new technologies that improve our daily lives. For example, satellite technology helps us predict the weather and navigate using GPS. Space research has also led to improvements in medicine, materials and communication. The future of space exploration is exciting. Scientists are planning missions to Mars and beyond. Perhaps one day, humans will live on other planets. As we continue to explore, we discover not only new worlds but also new possibilities for our own." }
+      ]},
+      { id:"8B-U8", title:"Unit 8 Imagine that!", readings:[
+        { title:"Reading — Aliens arrive!", text:"Tina woke up at midnight. She looked out of her window and saw a yellow light in the sky. It suddenly dived towards the ground. She heard a noise and saw a red light. The next morning, Tina mentioned it to her brother Tom. 'I'm sure something landed in the forest near the hills as I heard a loud noise last night,' she said. 'Let's go and explore after school tonight.' At 6:00 p.m., Tina and Tom reached the forest. They heard some voices speaking a strange language, so they hid behind some bushes and kept quiet. Then they saw an alien! It was tall, with a round head and a silver body. It was standing next to a long spaceship. The spaceship was damaged because of a crash. Suddenly, another alien appeared from the bushes in front of them. The children were frightened. But then Tom got a feeling at the back of his throat. He couldn't stop himself and coughed loudly. The aliens saw them both and made a terrible noise! The children ran away in fear. The next day, Tina and Tom told their parents about the strange creatures. 'They were very ugly. They had some hair, but they didn't have any feathers,' said Tina. 'There was something written on the spaceship,' said Tom. 'It looked like this. I wonder what it means.' He drew some lines on a piece of paper. Dad looked at them as if they were crazy. 'Since no one else saw these aliens, I refuse to believe you. Now go to school!' The children spread their wings and flew to school together. Dad looked at the piece of paper with the strange marks on it. 'It looks strange,' he said, as he looked at the word 'EARTH'." }
+      ]}
+    ]
+  },
+  "9A": {
+    name: "九年级上册",
+    units: [
+      { id:"9A-U1", title:"Unit 1 Wise men in history", readings:[
+        { title:"Reading — Archimedes and the golden crown", text:"One day in ancient Greece, King Hiero asked a crown maker to make him a golden crown. At first, he was very happy with it. 'It's a nice crown, isn't it?' he asked his men. Later, however, he began to doubt that it was a real golden crown. 'Is it made completely of gold?' he wondered. He sent it to Archimedes and asked him to find out the truth. 'This problem seems difficult to solve. What should I do?' thought Archimedes. Archimedes was still thinking about this problem as he filled his bath with water. When he got into the bath, some water ran over. 'That's it!' shouted Archimedes. 'I know how to solve the king's problem!' Archimedes went straight to the palace to see the king. First, he weighed the crown and asked the king for some gold of the same weight. Next, he put two pots into two big bowls and filled both pots with water. He put the gold into one pot, and some water ran into the bowl. Then he put the crown into the other pot. This time, even more water ran into the bowl. 'Look at this,' said Archimedes to King Hiero. 'A crown made completely of gold displaces less water than a crown made of gold and another metal. This crown displaced more water than gold of the same weight, so I'm certain that it's not completely made of gold.' 'The crown maker tricked me, didn't he? What a bad man he is!' shouted King Hiero. He then sent the crown maker to prison." }
+      ]},
+      { id:"9A-U2", title:"Unit 2 Great minds", readings:[
+        { title:"Reading — Great minds in science", text:"Throughout history, great minds have changed the world with their ideas and discoveries. Two of the greatest scientists were Isaac Newton and Albert Einstein. Isaac Newton was born in England in 1643. He was one of the most important scientists who ever lived. Newton discovered the law of gravity. The story goes that he was sitting under an apple tree when an apple fell on his head. This made him think about why things fall down and not up. He also discovered the three laws of motion, which explain how objects move. His book, the Principia, is one of the most important scientific books ever written. Albert Einstein was born in Germany in 1879. When he was young, he was not considered a good student. However, he was always curious about how things worked. He loved mathematics and physics. In 1905, Einstein published his theory of relativity. This theory changed the way scientists understood space, time and energy. His famous equation, E=mc2, shows that mass and energy are related. Einstein won the Nobel Prize in Physics in 1921. Both Newton and Einstein showed that curiosity and hard work can lead to great discoveries. Newton once said, 'If I have seen further, it is by standing on the shoulders of giants.' Einstein said, 'Imagination is more important than knowledge.' These great minds remind us that asking questions and thinking differently can change the world." }
+      ]},
+      { id:"9A-U3", title:"Unit 3 Family life", readings:[
+        { title:"Reading — Family life in cities", text:"Paula interviewed two teenagers for a programme on family life. She asked them some questions. Here are their answers. Emily (aged 15): Well, there are just three of us: my mum, my dad and me. Have I got many possessions? Yes, I've got a lot of things: a big TV, a new computer and a mobile phone. No, I'm not expected to do the housework. We go out for dinner together sometimes, but my dad is often abroad on business, and my mum works too. We usually just do our own personal things. No, they don't usually set rules for me, and since I'm a good daughter, they never punish me. Well, I like our new flat. It's much bigger than our last one. But I feel lonely when my parents are away from home. Jerry (aged 14): My mum, dad, grandma and my sister Rosie. Although it sometimes feels crowded in our little flat, we don't mind. No, I haven't got many possessions. I have no interest in things like fashionable clothes. New fashions soon go out of date, don't they? Yes, I help with the housework. I wash the dishes and even iron my own shirts. Yes, we like doing things together. We eat meals together every day, and my grandma always tells us stories about the past. Oh yes, there are lots of rules. For example, I must finish my homework before I can watch TV. And I can't go out with my friends on school nights. But I think these rules are reasonable. I love our small flat because it's full of love and warmth." }
+      ]},
+      { id:"9A-U4", title:"Unit 4 Problems and advice", readings:[
+        { title:"Reading — Advice for teenagers", text:"Many teenagers face problems in their daily lives. Here are some common problems and advice from Dr Chen, an expert on teenage issues. Problem 1: 'I have too much homework and I always stay up late. I feel tired every day.' Advice: Time management is important. Make a study plan and follow it. Do the most important tasks first. Also, make sure you get enough sleep. A tired brain cannot work well. Problem 2: 'My parents don't understand me. They always want me to study and never let me have fun.' Advice: Try to talk to your parents calmly. Tell them how you feel. Listen to their side too. Remember that your parents love you and want the best for you. You can suggest a compromise, like finishing your homework first and then having some free time. Problem 3: 'My best friend is angry with me, but I don't know why.' Advice: Talk to your friend directly. Ask what went wrong. If you did something wrong, say sorry. True friendship is worth fighting for. If your friend doesn't want to talk, give them some time and try again later. Problem 4: 'I'm worried about my exams. I study hard but I still get low marks.' Advice: Don't just study hard \u2014 study smart. Try different learning methods. Ask your teachers for help. Also, don't be too hard on yourself. Everyone has strengths and weaknesses. Focus on making progress, not just on marks." }
+      ]},
+      { id:"9A-U5", title:"Unit 5 Action!", readings:[
+        { title:"Reading — Taking action for a better world", text:"Young people around the world are taking action to make the world a better place. Here are three stories of young people who decided to make a difference. Li Ming, a 14-year-old boy from Beijing, noticed that many elderly people in his neighbourhood had difficulty carrying heavy bags of rubbish down the stairs. He organized a group of volunteers to help the elderly take out their rubbish every week. At first, only five students joined, but now more than thirty students volunteer regularly. 'It only takes a few minutes, but it means a lot to the elderly people,' says Li Ming. Sarah, a 15-year-old girl from London, was shocked to learn that millions of people around the world don't have clean drinking water. She started a campaign at her school to raise money for water projects in Africa. She organized a 'Walk for Water' event where students walked five kilometres carrying heavy bottles of water. This helped them understand what many people go through every day just to get water. Her school has raised over ten thousand pounds. Raj, a 13-year-old boy from India, saw that many children in his village couldn't go to school because they had to work to help their families. He started a free tutoring programme in the evenings. He and his friends teach younger children maths and English. 'Education is the best way to change a person's life,' says Raj. These young people show that you don't have to be an adult to make a difference. Anyone can take action, no matter how old they are." }
+      ]},
+      { id:"9A-U6", title:"Unit 6 Healthy diet", readings:[
+        { title:"Reading — Eating for health", text:"We all know that eating a healthy diet is important, but what does a healthy diet really look like? A healthy diet includes a variety of foods that give your body the nutrients it needs. Here are some tips for eating well. First, eat plenty of fruits and vegetables. They are rich in vitamins, minerals and fibre. Try to eat at least five servings of fruits and vegetables every day. Different coloured fruits and vegetables contain different nutrients, so eat a rainbow of colours. Second, choose whole grains. Brown rice, whole wheat bread and oats are better than refined grains like white rice and white bread. Whole grains contain more fibre and nutrients, and they help you feel full for longer. Third, include protein in every meal. Good sources of protein include fish, chicken, eggs, beans and nuts. Protein helps build and repair your body. Try to eat less red meat and processed meat. Fourth, limit sugar and salt. Too much sugar can cause weight gain and tooth decay. Too much salt can lead to high blood pressure. Read food labels carefully and choose products with less sugar and salt. Fifth, don't skip breakfast. A good breakfast gives you energy to start the day. Studies show that students who eat breakfast do better in school. Finally, drink plenty of water. Water is the best drink for your body. Avoid sugary drinks like soda and juice, as they contain a lot of sugar. Remember, a healthy diet is not about strict rules or giving up foods you love. It's about making better choices most of the time. Small changes can make a big difference to your health." }
+      ]},
+      { id:"9A-U7", title:"Unit 7 The Adventures of Tom Sawyer", readings:[
+        { title:"Reading — Tom Sawyer paints the fence", text:"On Saturday morning, every boy in town was happy, except Tom Sawyer. Tom's aunt gave him a task of painting their fence. It was 30 yards long and three yards high. He painted one board and surveyed his progress, and then he sat down to have a rest. Tom began to think of the games that he wanted to play. He knew the boys who were free would soon come along and make fun of him. Just then, he had an idea. He picked up his brush and went back to work. Ben Rogers came along the road. He was singing happily and carrying an apple. 'I'm going swimming,' said Ben. 'Do you want to come? Oh, you have to work, don't you? What a pity!' 'Work?' said Tom. 'This isn't work. I'm enjoying myself. Does a boy get a chance to paint a fence like this every day?' That put things in a new light. Ben stopped eating his apple. Tom swept his brush carefully back and forth, and stepped back to look at the result. Ben watched with great interest. Before long, he said, 'Say, Tom, let me paint a little.' Tom thought for a moment, and then said, 'No, I don't think I can. Aunt Polly is very particular about this fence. It must be done very carefully.' 'Oh, come on, let me just try!' said Ben. 'I'll give you my apple.' Tom gave up the brush with reluctance in his face but willingness in his heart. And while Ben worked in the sun, Tom sat under the tree, eating the apple and planning how to get more boys to do the work. Boy after boy came along. Each one hoped to try painting, and each one paid something for the chance. By the afternoon, Tom was rich in treasures, and the fence had three coats of paint. He had discovered a great law of human action: in order to make a man desire a thing, you only need to make the thing difficult to get." }
+      ]},
+      { id:"9A-U8", title:"Unit 8 Surprise endings", readings:[
+        { title:"Reading — The gift of the Magi", text:"It was Christmas Eve. Della Young sat in her small apartment and counted her money. One dollar and eighty-seven cents. That was all. And the next day was Christmas. She wanted to buy a present for her husband Jim, but what could she buy with so little money? There was one thing Della was proud of \u2014 her beautiful long hair. It fell below her knees like a golden waterfall. She put on her old brown coat and ran out to Madame Sofronie's Hair Shop. 'Will you buy my hair?' asked Della. 'I buy hair,' said Madame. 'Take your hat off and let's have a look.' The next two hours flew by. Della searched every store for Jim's present. She found it at last \u2014 a platinum watch chain. It was perfect for Jim's gold watch, which had been his father's and his grandfather's. The chain cost twenty-one dollars. She hurried home with the chain and the eighty-seven cents. When Jim came home from work and saw Della's short hair, he stopped. He stared at her with a strange expression. 'Jim, don't look at me that way!' said Della. 'My hair will grow again. I had to sell it to buy your Christmas present.' Jim seemed to wake up. He smiled and drew a package from his coat. 'Open it, Della,' he said. Della opened the package. Inside were beautiful combs \u2014 the combs she had always wanted for her long hair. She looked at them and then at her short hair. 'My hair grows so fast, Jim!' she said happily. Then she remembered Jim's present. 'Isn't the chain beautiful, Jim? You'll have to look at the time now,' she said. Jim sat down, put his hands behind his head, and smiled. 'Della,' he said, 'let's put our Christmas presents away. They're too nice to use right now. I sold the watch to get the money to buy your combs. And now, I think we should have our dinner.' They were wise, these two \u2014 the wisest of all who give gifts." }
+      ]}
+    ]
+  },
+  "9B": {
+    name: "九年级下册",
+    units: [
+      { id:"9B-U1", title:"Unit 1 Great explorations", readings:[
+        { title:"Reading — The voyages of Zheng He", text:"Zheng He was a famous Chinese explorer. In 1405, he set off from China on the first of seven great voyages. This was nearly a century before Christopher Columbus first set sail on his journey of discovery to America. His travels were so important that they are still studied today. Zheng He was born in Yunnan in 1371. He rose to become a trusted official of the Yongle Emperor of the Ming Dynasty. The emperor ordered Zheng He to visit and explore the lands outside China. His task was to develop relations and set up trade routes with foreign countries. In a few years, he built a great fleet of ships, the biggest in the world at that time. The ships were known as treasure ships. They were big enough to carry people as well as very large quantities of goods. Between 1405 and 1433, Zheng He made seven voyages. He visited more than 30 countries and areas. His fleet travelled as far as the east coast of Africa. Zheng He brought back many wonderful things from his travels, including precious stones, exotic animals and new ideas. He also shared Chinese culture and technology with the people he met. His voyages opened up trade routes and built friendship between China and other countries. However, after the emperor died, the new ruler stopped the voyages. The great ships were left to rot, and China turned inward. Some people think China missed a great opportunity. If the voyages had continued, the history of the world might have been very different. Today, Zheng He is remembered as one of the greatest explorers in history. His courage and achievements continue to inspire people around the world." }
+      ]},
+      { id:"9B-U2", title:"Unit 2 Culture shock", readings:[
+        { title:"Reading — Living in another country", text:"My name is Brad Li. I'm here today to tell you about my experience as an exchange student in the United States last year. I must admit that at first America was a big culture shock for me. Many things were strange to me: the language, the food and even the school. I stayed with a host family in a small town. My host parents, Mr and Mrs Hurst, were very kind. They organized a lot of activities for me in my spare time so that I wouldn't miss home or feel lonely. However, American life was hard to get used to in some ways. My main problem was the language. In the first few weeks, I failed to understand much because everyone spoke so fast. Although I soon managed to get used to it, I still had trouble because they used a lot of idioms. For example, they often say 'under the weather' when they are sick. Their everyday English is very different from what we learn in China. Another difference was the food. My host family always ate bread, potatoes and salad for meals. I really missed Chinese dumplings, rice and delicious dishes! School was also a big shock. They don't require students to wear school uniforms, so students can wear almost anything they like. Some students even have pink or purple hair! But there were many good things too. I made lots of new friends. I tried baseball for the first time, and I really enjoyed it. At Halloween, I dressed up as Harry Potter and went to a party. At Thanksgiving, we had a big dinner with a huge turkey. Living in another country is challenging, but it's also a wonderful experience. I learned a lot about American culture, and I also thought more about my own culture. I would recommend an exchange programme to anyone!" }
+      ]},
+      { id:"9B-U3", title:"Unit 3 The environment", readings:[
+        { title:"Reading — The world in danger", text:"Our world is in danger. We must do something to protect the environment. But, what are the main problems we face? The greenhouse effect: The atmosphere around the Earth is necessary for all living things. It is like the glass of a greenhouse, letting sunlight in and keeping heat from getting out. Without it, the Earth would be the same as the Moon \u2014 cold and lifeless. When we burn fuels such as petrol and coal, we produce a gas called carbon dioxide (CO2). Too much of this gas pollutes the atmosphere, and causes it to keep in too much heat. As a result of the greenhouse effect, the Earth's temperature is increasing. This causes sea level to rise, and in the future may cause cities to disappear. Cutting down forests: Every year, we destroy nature by cutting down huge areas of forests. This makes the greenhouse effect worse because trees take in CO2 and produce oxygen. Cutting down trees also destroys the homes of the animals that live in our forests, and causes the surface of the soil to be easily destroyed by rain. This can result in floods and even more damage to the environment. Bad habits: Many of our habits cause pollution. People often use things once and then throw them away, or leave them on the ground as litter. This increases mountains of rubbish and pollutes our land and seas. In order to protect the environment, we need to take proper action. We should be different from many consumers and become 'green consumers'. This means that we should only buy and use products friendly to the environment. We should also recycle as many things as we can. We can reuse things for the same purpose as before, or we can use them for new purposes. If we just learn to live in new and different ways, we can make a difference." }
+      ]},
+      { id:"9B-U4", title:"Unit 4 Natural disasters", readings:[
+        { title:"Reading — The great flood", text:"It had been raining for three days without stopping. The river was rising higher and higher. People in the village were getting worried. 'If the rain doesn't stop soon, the river will flood,' said Mr Wang, the village leader. By the fourth day, the water had risen above the river banks. The flood came quickly. Within hours, the streets were under water. People rushed to higher ground, carrying what they could. Some carried children, others carried food and water. Unfortunately, not everyone could escape in time. The water was very strong and it washed away cars, trees and even houses. The army was called in to help. Soldiers used boats to rescue people from their rooftops. Helicopters dropped food and supplies to those who were trapped. Volunteers worked day and night to help the victims. After the flood, the village was in ruins. Houses were destroyed, roads were washed away, and fields were covered in mud. But the people were strong. They helped each other clean up and rebuild. Donations poured in from all over the country. Natural disasters like floods, earthquakes and typhoons can happen anywhere. Scientists say that climate change is making these disasters more frequent and more severe. We cannot stop natural disasters, but we can prepare for them. Early warning systems can give people time to evacuate. Stronger buildings can withstand earthquakes. Better drainage systems can reduce flooding. Most importantly, we must take action to slow down climate change. If we don't, disasters like this will become more common and more dangerous." }
+      ]},
+      { id:"9B-U5", title:"Unit 5 Sport", readings:[
+        { title:"Reading — Skiing: An unforgettable experience", text:"Last year, my parents took me on a very special holiday. My dream was to see some real snow, so during the Christmas holiday, we took our passports and flew over the Pacific to Calgary, Canada. We took a bus to a ski resort in the Canadian Rockies. As the bus climbed through the mountains, we saw the thick snow on the trees. I was dying to get out and play with it! At last, we reached the resort and quickly jumped out of the bus. This was our first experience with snow. We were like little children \u2014 we made snowballs, and threw them at one another! Then we checked in at the hotel. We could see the ski slope opposite the hotel. We could not wait to get out and ski. The next day, we put on our ski suits and gloves, took our skis and went outside onto the snow. Wearing skis for the first time made me feel strange. Suddenly I found myself unable to walk! Then we had a skiing lesson with a young couple. Our instructor took us to a gentle slope, and showed us some basic skills. I kept on falling down, and I was so embarrassed! However, the instructor was very patient. By the end of the lesson, I could stand on my skis and even make simple turns. On the second day, we went up the mountain. The view was amazing \u2014 white snow and blue sky as far as I could see. I skied down the slope many times. Each time I did better and felt more confident. On our last day, we had a skiing competition. I didn't win, but I didn't care. I had the time of my life. This experience taught me that trying something new can be difficult at first, but if you keep trying, you will succeed. I will never forget this amazing trip!" }
+      ]},
+      { id:"9B-U6", title:"Unit 6 Caring for your health", readings:[
+        { title:"Reading — How to lead a balanced life", text:"Many students suffer from stress in their daily lives. They are under stress because their lives are not balanced. They focus too much on studying, dealing with peer pressure and worrying about what others think, and not enough on other things. You may wonder whether stress is a serious matter. The answer is 'Yes'. You should be aware that stress is a risk to your health. If you want to live a long and healthy life, you need to begin to guard against stress from a young age. Here are some ways to deal with stress and bring balance to your life: Be positive. One way to cancel out stress is through positive thinking. You should always look on the bright side of life, and imagine that you will have a happy and successful future. Learn to relax. Force yourself to take a break from your studies and worries about exams. You can do this by taking a walk, reading a book, going to a concert or seeing a film, or just sitting in a private place and being silent for a moment. Take up a hobby. Learn to paint, take up skating, or start playing a musical instrument. When you are busy with a hobby, you leave all your worries behind. Take care of your body. Stress is your body's enemy. Taking regular exercise, eating a healthy diet and getting enough sleep are all the things that can help you. Laugh. Sometimes laughter is the best medicine for stress. Seeing a funny film or telling jokes with friends will often cheer you up when you are low. Remember, a balanced life is the key to happiness and health. Don't let stress control your life. Take action today!" }
+      ]}
+    ]
   }
 };
 
@@ -1325,7 +2031,8 @@ let state = {};
 function initState() {
   state = {
     role: localStorage.getItem('ec_role') || '',
-    currentBook: '7A',
+    currentGrade: localStorage.getItem('ec_grade') || '7',
+    currentBook: localStorage.getItem('ec_grade') ? localStorage.getItem('ec_grade')+'A' : '7A',
     currentUnitIdx: 0,
     currentMode: 'browse',
     currentWordIdx: 0,
@@ -1377,6 +2084,7 @@ function save(){
     localStorage.setItem('ec_checkins',JSON.stringify(state.checkins));
     localStorage.setItem('ec_streak',String(state.streak));
     localStorage.setItem('ec_role',state.role);
+    localStorage.setItem('ec_grade',state.currentGrade);
     localStorage.setItem('ec_studentId',state.studentId);
     localStorage.setItem('ec_studentName',state.studentName);
     localStorage.setItem('ec_students',JSON.stringify(state.students));
@@ -1447,6 +2155,8 @@ function selectRole(role){
   try{
     state.role=role;
     localStorage.setItem('ec_role',role);
+    // Ensure currentBook matches currentGrade
+    state.currentBook=state.currentGrade+'A';
     // Hide role page
     var rp=document.getElementById('rolePage'); if(rp) rp.style.display='none';
     hideAllPagesExceptRole();
@@ -1456,6 +2166,7 @@ function selectRole(role){
         showStudentInfoModal();
       }
       document.getElementById('stuTabBar').style.display='flex';
+      updateBookSwitch();
       switchStuTab('hw');
     } else {
       document.getElementById('tchTabBar').style.display='flex';
@@ -2742,20 +3453,26 @@ function initCreatePage(){
   var sel=document.getElementById('hwUnit');
   if(!sel) return;
   sel.innerHTML='<option value="">自定义内容</option>';
-  Object.keys(VOCAB).forEach(function(book){
-    VOCAB[book].units.forEach(function(u){
-      sel.innerHTML+='<option value="'+u.id+'">'+VOCAB[book].name+' '+u.title+'</option>';
-    });
+  // Only show units for the selected grade
+  var g=state.currentGrade;
+  [g+'A',g+'B'].forEach(function(book){
+    if(VOCAB[book]){
+      VOCAB[book].units.forEach(function(u){
+        sel.innerHTML+='<option value="'+u.id+'">'+VOCAB[book].name+' '+u.title+'</option>';
+      });
+    }
   });
 
   // Vocab unit selector
   var vsel=document.getElementById('hwVocabUnit');
   if(vsel){
     vsel.innerHTML='<option value="">请选择课次</option>';
-    Object.keys(VOCAB).forEach(function(book){
-      VOCAB[book].units.forEach(function(u){
-        vsel.innerHTML+='<option value="'+u.id+'">'+VOCAB[book].name+' '+u.title+'</option>';
-      });
+    [g+'A',g+'B'].forEach(function(book){
+      if(VOCAB[book]){
+        VOCAB[book].units.forEach(function(u){
+          vsel.innerHTML+='<option value="'+u.id+'">'+VOCAB[book].name+' '+u.title+'</option>';
+        });
+      }
     });
     vsel.onchange=updateVocabUnitWordCount;
   }
@@ -3114,11 +3831,29 @@ function deleteAssignment(id){
 }
 
 // ===== WORDS - BROWSE =====
+function selectGrade(grade){
+  state.currentGrade=grade;
+  state.currentBook=grade+'A';
+  state.currentUnitIdx=0;
+  localStorage.setItem('ec_grade',grade);
+  document.getElementById('grade7').classList.toggle('active',grade==='7');
+  document.getElementById('grade8').classList.toggle('active',grade==='8');
+  document.getElementById('grade9').classList.toggle('active',grade==='9');
+  updateBookSwitch();
+}
+
+function updateBookSwitch(){
+  var g=state.currentGrade;
+  var bookA=document.getElementById('bookA');
+  var bookB=document.getElementById('bookB');
+  if(bookA){bookA.textContent='上册 ('+g+'A)';bookA.classList.toggle('active',state.currentBook===g+'A')}
+  if(bookB){bookB.textContent='下册 ('+g+'B)';bookB.classList.toggle('active',state.currentBook===g+'B')}
+}
+
 function switchBook(book){
   state.currentBook=book;
   state.currentUnitIdx=0;
-  document.getElementById('book7A').classList.toggle('active',book==='7A');
-  document.getElementById('book7B').classList.toggle('active',book==='7B');
+  updateBookSwitch();
   renderUnitTabs();
 }
 
@@ -3789,6 +4524,10 @@ function showRolePage(){
   var rp=document.getElementById('rolePage');
   if(rp) rp.style.display='flex';
   hideAllPagesExceptRole();
+  // Restore grade selection UI
+  document.getElementById('grade7').classList.toggle('active',state.currentGrade==='7');
+  document.getElementById('grade8').classList.toggle('active',state.currentGrade==='8');
+  document.getElementById('grade9').classList.toggle('active',state.currentGrade==='9');
 }
 
 // ===== WRONG WORD NOTEBOOK (错题本) =====
